@@ -1,6 +1,11 @@
 Rails.application.routes.draw do
-  devise_for :clients
-  devise_for :staffs
+  namespace :crm do
+    devise_for :clients
+  end
+
+  namespace :admin do
+    devise_for :staffs
+  end
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
   root 'application#index'
 end
