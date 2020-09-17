@@ -5,12 +5,11 @@
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
-    <%= javascript_pack_tag 'hello_vue' %>
+    <%= javascript_pack_tag vue_pack %>
   </head>
 
   <body>
-    <p class="notice"><%= notice %></p>
-    <p class="alert"><%= alert %></p>
+    <%= render 'shared/flash' %>
     <%= yield %>
   </body>
 </html>
