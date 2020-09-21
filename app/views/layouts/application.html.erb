@@ -5,11 +5,11 @@
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
-    <%= stylesheet_link_tag 'application', media: 'all' %>
-    <%= javascript_pack_tag 'application' %>
+    <%= javascript_pack_tag vue_pack %>
   </head>
 
   <body>
+    <%= render 'shared/flash' %>
     <%= yield %>
   </body>
 </html>
