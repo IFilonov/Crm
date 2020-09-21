@@ -1,21 +1,14 @@
 <template>
-
-  <div id="app">
-    <navbar></navbar>
+  <div id="navbar">
     <p>{{ message }}</p>
   </div>
 </template>
 
 <script>
-import navbar from "./components/navbar";
-
 export default {
-  components: {
-    'navbar': navbar
-  },
   data: function () {
     return {
-      message: "Hello Staff!"
+      message: "Hello Navbar!"
     }
   }
 }
