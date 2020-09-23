@@ -1,17 +1,19 @@
 <template>
-
-  <div id="app">
+  <div id="staff">
     <navbar :user_email_path="this.user_email_path" :user_logout_path="this.user_logout_path"></navbar>
+    <dashboard></dashboard>
     <p>{{ message }}</p>
   </div>
 </template>
 
 <script>
 import navbar from "../shared/navbar";
+import dashboard from "./dashboard";
 
 export default {
   components: {
-    'navbar': navbar
+    'navbar': navbar,
+    'dashboard': dashboard
   },
   data: function () {
     return {
