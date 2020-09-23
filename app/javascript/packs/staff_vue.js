@@ -8,6 +8,7 @@
 import Vue from 'vue'
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
 import App from '../staff.vue'
+import '../api'
 
 // Install BootstrapVue
 Vue.use(BootstrapVue)

@@ -15,9 +15,9 @@
           <b-nav-item-dropdown right>
             <!-- Using 'button-content' slot -->
             <template v-slot:button-content>
-              <em>User</em>
+              <em> Hello, {{ staff_email }}</em>
             </template>
-            <b-dropdown-item href="#">Sign Out</b-dropdown-item>
+            <b-dropdown-item :href="this.user_logout_path">Sign Out</b-dropdown-item>
           </b-nav-item-dropdown>
         </b-navbar-nav>
       </b-collapse>
@@ -29,7 +29,18 @@
 export default {
   data: function () {
     return {
+      staff_email: null
      }
+  },
+  props: ['user_email_path', 'user_logout_path'],
+  methods: {
+    async fetchCurrentStaff () {
+      const response = await this.$api.get(this.user_email_path);
+      this.staff_email = response.data.staff_email;
+    }
+  },
+  mounted() {
+    this.fetchCurrentStaff();
   }
 }
 </script>

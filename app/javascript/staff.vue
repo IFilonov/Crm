@@ -1,7 +1,7 @@
 <template>
 
   <div id="app">
-    <navbar></navbar>
+    <navbar :user_email_path="this.user_email_path" :user_logout_path="this.user_logout_path"></navbar>
     <p>{{ message }}</p>
   </div>
 </template>
@@ -15,7 +15,9 @@ export default {
   },
   data: function () {
     return {
-      message: "Hello Staff!"
+      message: "Hello Staff!",
+      user_email_path: "/staffs/staff_email",
+      user_logout_path: "/staffs/staff_logout"
     }
   }
 }
