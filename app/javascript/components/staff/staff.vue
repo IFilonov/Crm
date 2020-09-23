@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import navbar from "./components/navbar";
+import navbar from "../shared/navbar";
 
 export default {
   components: {
