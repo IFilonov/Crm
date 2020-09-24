@@ -2,9 +2,6 @@
   <div>
     <b-card
         title="New Client"
-        img-src="https://picsum.photos/600/300/?image=25"
-        img-alt="Image"
-        img-top
         tag="article"
         style="max-width: 20rem;"
         class="mb-2"
@@ -14,7 +11,6 @@
           <b-form-input
               id="input-2"
               v-model="form.fullname"
-              required
               placeholder="Enter name"
           ></b-form-input>
         </b-form-group>
@@ -28,8 +24,7 @@
           <b-form-input
               id="input-1"
               v-model="form.email"
-              type="email"
-              required
+              type="text"
               placeholder="Enter email"
           ></b-form-input>
         </b-form-group>
@@ -38,8 +33,7 @@
           <b-form-input
               id="input-3"
               v-model="form.phone"
-              type="phone"
-              required
+              type="text"
               placeholder="Enter phone"
           ></b-form-input>
         </b-form-group>
@@ -58,18 +52,46 @@
 export default {
   data() {
     return {
+      errors: [],
       form: {
         fullname: '',
         email: '',
         phone: ''
       },
-      show: true
+      show: true,
+      errMsgs: Object.freeze({
+        FULLNAME_EMPTY: 'Укажите имя не менее 5 символов',
+        EMAIL_EMPTY: ' Укажите электронную почту',
+        EMAIL_NOT_VALID: ' Укажите корректный адрес электронной почты',
+        PHONE_EMPTY: ' Укажите номер телефона',
+        PHONE_NOT_VALID: ' Укажите в телефоне только цифры'
+      })
     }
   },
   methods: {
     onSubmit(evt) {
       evt.preventDefault()
-      alert(JSON.stringify(this.form))
+      if (this.form.fullname.length < 5) {
+        this.errors.push(this.errMsgs.FULLNAME_EMPTY);
+      }
+      if (!this.form.email) {
+        this.errors.push(this.errMsgs.EMAIL_EMPTY);
+      } else if (!this.validEmail(this.form.email)) {
+        this.errors.push(this.errMsgs.EMAIL_NOT_VALID);
+      }
+      let numbers = /^[0-9]+$/;
+      if (!this.form.phone) {
+        this.errors.push(this.errMsgs.PHONE_EMPTY);
+      } else if (!this.form.phone.match(numbers)) {
+          this.errors.push(this.errMsgs.PHONE_NOT_VALID);
+      }
+      if (this.errors.length > 0) {
+        alert(this.errors)
+        this.errors = [];
+      }
+      else {
+        alert(JSON.stringify(this.form))
+      }
     },
     onReset(evt) {
       evt.preventDefault()
@@ -82,6 +104,10 @@ export default {
       this.$nextTick(() => {
         this.show = true
       })
+    },
+    validEmail: function (email) {
+      var re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      return re.test(email);
     }
   }
 }
