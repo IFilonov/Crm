@@ -3,7 +3,7 @@ class ClientsController < ApplicationController
   protect_from_forgery with: :null_session
 
   def index
-    clients = Client.all
+    render :json => Client.all.pluck_all(:fullname, :email, :phone)
   end
 
   def create

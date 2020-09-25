@@ -1,50 +1,54 @@
 <template>
   <div>
-    <b-card
-        title="New Client"
-        tag="article"
-        style="max-width: 20rem;"
-        class="mb-2"
-    >
-      <b-form @submit="onSubmit" @reset="onReset" v-if="show">
-        <b-form-group id="input-group-1" label="Your Fullname:" label-for="input-2">
-          <b-form-input
-              id="input-2"
-              v-model="form.fullname"
-              placeholder="Enter name"
-          ></b-form-input>
-        </b-form-group>
+    <b-card-group>
+      <b-card
+          title="New Client"
+          style="max-width: 20rem;"
+          class="mb-2"
+      >
+        <b-form @submit="onSubmit" @reset="onReset" v-if="show">
+          <b-form-group id="input-group-1" label="Your Fullname:" label-for="input-2">
+            <b-form-input
+                id="input-2"
+                v-model="form.fullname"
+                placeholder="Enter name"
+            ></b-form-input>
+          </b-form-group>
 
-        <b-form-group
-            id="input-group-2"
-            label="Email address:"
-            label-for="input-1"
-            description="We'll never share your email with anyone else."
-        >
-          <b-form-input
-              id="input-1"
-              v-model="form.email"
-              type="text"
-              placeholder="Enter email"
-          ></b-form-input>
-        </b-form-group>
+          <b-form-group
+              id="input-group-2"
+              label="Email address:"
+              label-for="input-1"
+              description="We'll never share your email with anyone else."
+          >
+            <b-form-input
+                id="input-1"
+                v-model="form.email"
+                type="text"
+                placeholder="Enter email"
+            ></b-form-input>
+          </b-form-group>
 
-        <b-form-group id="input-group-3" label="Phone:" label-for="input-3">
-          <b-form-input
-              id="input-3"
-              v-model="form.phone"
-              type="text"
-              placeholder="Enter phone"
-          ></b-form-input>
-        </b-form-group>
+          <b-form-group id="input-group-3" label="Phone:" label-for="input-3">
+            <b-form-input
+                id="input-3"
+                v-model="form.phone"
+                type="text"
+                placeholder="Enter phone"
+            ></b-form-input>
+          </b-form-group>
 
-        <b-button type="submit" variant="primary">Submit</b-button>
-        <b-button type="reset" variant="danger">Reset</b-button>
-      </b-form>
-      <b-card class="mt-3" header="Form Data Result">
-        <pre class="m-0">{{ form }}</pre>
+          <b-button type="submit" variant="primary">Submit</b-button>
+          <b-button type="reset" variant="danger">Reset</b-button>
+        </b-form>
+        <b-card class="mt-3" header="Form Data Result">
+          <pre class="m-0">{{ form }}</pre>
+        </b-card>
       </b-card>
-    </b-card>
+      <b-card>
+        <b-table striped hover :items="clients"></b-table>
+      </b-card>
+    </b-card-group>
   </div>
 </template>
 
@@ -52,6 +56,7 @@
 export default {
   data() {
     return {
+      clients: [],
       errors: [],
       form: {
         fullname: '',
@@ -64,10 +69,13 @@ export default {
         EMAIL_EMPTY: ' Укажите электронную почту',
         EMAIL_NOT_VALID: ' Укажите корректный адрес электронной почты',
         PHONE_EMPTY: ' Укажите номер телефона',
-        PHONE_NOT_VALID: ' Укажите в телефоне только цифры'
+        PHONE_NOT_VALID: ' Укажите в телефоне только цифры',
+        GET_CLIENTS: ' Ошибка получения данных',
+        SEND_CLIENT: ' Ошибка передачи данных'
       })
     }
   },
+  props: ['clients_path', 'client_create_path'],
   methods: {
     onSubmit(evt) {
       evt.preventDefault()
@@ -85,13 +93,11 @@ export default {
       } else if (!this.form.phone.match(numbers)) {
           this.errors.push(this.errMsgs.PHONE_NOT_VALID);
       }
-      if (this.errors.length > 0) {
-        alert(this.errors)
-        this.errors = [];
-      }
-      else {
-        alert(JSON.stringify(this.form));
+      if (!this.checkErrors())
+      {
         this.sendCurrentClient(this.form);
+        this.getClients();
+        this.checkErrors();
       }
     },
     onReset(evt) {
@@ -107,12 +113,36 @@ export default {
       })
     },
     validEmail: function (email) {
-      var re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      let re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
       return re.test(email);
     },
     async sendCurrentClient (client) {
-      const response = await this.$api.post('/clients/create', client);
+      try {
+        const response = await this.$api.post(this.client_create_path, client);
+      } catch(err)  {
+        this.errors.push(err);
+      }
+    },
+    async getClients() {
+      try {
+        const response = await this.$api.get(this.clients_path);
+        this.clients = response.data;
+      } catch(err) {
+        this.errors.push(err);
+      }
+    },
+    checkErrors() {
+      let is_err = this.errors.length > 0;
+      if (is_err) {
+        alert(this.errors)
+        this.errors = [];
+      }
+      return is_err;
     }
+
+  },
+  mounted() {
+    this.getClients();
   }
 }
 </script>
