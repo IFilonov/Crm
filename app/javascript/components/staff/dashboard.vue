@@ -90,7 +90,8 @@ export default {
         this.errors = [];
       }
       else {
-        alert(JSON.stringify(this.form))
+        alert(JSON.stringify(this.form));
+        this.sendCurrentClient(this.form);
       }
     },
     onReset(evt) {
@@ -108,6 +109,9 @@ export default {
     validEmail: function (email) {
       var re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
       return re.test(email);
+    },
+    async sendCurrentClient (client) {
+      const response = await this.$api.post('/clients/create', client);
     }
   }
 }
