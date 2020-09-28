@@ -35,6 +35,8 @@
 </template>
 
 <script>
+import ERRORS from "../../utils/errors";
+import VALIDATORS from "../../utils/validators";
 export default {
   data() {
     return {
@@ -45,16 +47,7 @@ export default {
         email: '',
         phone: ''
       },
-      show: true,
-      errMsgs: Object.freeze({
-        FULLNAME_EMPTY: 'Укажите имя не менее 5 символов',
-        EMAIL_EMPTY: ' Укажите электронную почту',
-        EMAIL_NOT_VALID: ' Укажите корректный адрес электронной почты',
-        PHONE_EMPTY: ' Укажите номер телефона',
-        PHONE_NOT_VALID: ' Укажите в телефоне только цифры',
-        GET_CLIENTS: ' Ошибка получения данных',
-        SEND_CLIENT: ' Ошибка передачи данных'
-      })
+      show: true
     }
   },
   props: ['clients_path', 'client_create_path'],
@@ -62,18 +55,18 @@ export default {
     onSubmit(evt) {
       evt.preventDefault()
       if (this.form.fullname.length < 5) {
-        this.errors.push(this.errMsgs.FULLNAME_EMPTY);
+        this.errors.push(ERRORS.FULLNAME_EMPTY);
       }
       if (!this.form.email) {
-        this.errors.push(this.errMsgs.EMAIL_EMPTY);
+        this.errors.push(ERRORS.EMAIL_EMPTY);
       } else if (!this.validEmail(this.form.email)) {
-        this.errors.push(this.errMsgs.EMAIL_NOT_VALID);
+        this.errors.push(ERRORS.EMAIL_NOT_VALID);
       }
-      let numbers = /^[0-9]+$/;
+      let numbers = VALIDATORS.PHONE;
       if (!this.form.phone) {
-        this.errors.push(this.errMsgs.PHONE_EMPTY);
+        this.errors.push(ERRORS.PHONE_EMPTY);
       } else if (!this.form.phone.match(numbers)) {
-          this.errors.push(this.errMsgs.PHONE_NOT_VALID);
+          this.errors.push(ERRORS.PHONE_NOT_VALID);
       }
       if (!this.checkErrors())
       {
@@ -95,7 +88,7 @@ export default {
       })
     },
     validEmail: function (email) {
-      let re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      let re = VALIDATORS.EMAIL;
       return re.test(email);
     },
     async sendCurrentClient (client) {

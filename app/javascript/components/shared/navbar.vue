@@ -12,27 +12,17 @@
           b-nav-item-dropdown(right)
             <!-- Using 'button-content' slot -->
             template(v-slot:button-content)
-              em Hello, {{ staff_email }}
-            b-dropdown-item(:href="this.user_logout_path") Sign Out
+              em Hello, {{ user_email }}
+            b-dropdown-item(:href="user_logout_path") Sign Out
 </template>
 
 <script>
 export default {
   data: function () {
     return {
-      staff_email: null
      }
   },
-  props: ['user_email_path', 'user_logout_path'],
-  methods: {
-    async fetchCurrentStaff () {
-      const response = await this.$api.get(this.user_email_path);
-      this.staff_email = response.data.staff_email;
-    }
-  },
-  mounted() {
-    this.fetchCurrentStaff();
-  }
+  props: ['user_email', 'user_logout_path']
 }
 </script>
 

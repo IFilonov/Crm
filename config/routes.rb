@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  root 'application#index'
+
   devise_for :clients
   devise_for :staffs
 
@@ -7,5 +9,4 @@ Rails.application.routes.draw do
   post '/clients/create', to: 'clients#create'
   get '/clients', to: 'clients#index'
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
-  root 'application#index'
 end

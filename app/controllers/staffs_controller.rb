@@ -7,6 +7,7 @@ class StaffsController < ApplicationController
   end
 
   def staff_logout
-    redirect_to destroy_staff_session_path
+    sign_out current_staff
+    redirect_to root_path
   end
 end
