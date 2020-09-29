@@ -7,8 +7,9 @@
 
 import Vue from 'vue'
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
-import App from '../components/staff/staff.vue'
-import '../api'
+import App from '../crm/components/staff/staff.vue'
+import '../crm/api'
+import '../crm/quasar'
 
 // Install BootstrapVue
 Vue.use(BootstrapVue)
