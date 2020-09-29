@@ -1,3 +1,6 @@
 class ApplicationController < ActionController::Base
-    def index; end
+
+  before_action :authenticate_staff!
+
+  def index; end
 end
