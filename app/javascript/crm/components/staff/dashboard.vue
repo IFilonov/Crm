@@ -1,37 +1,23 @@
 <template lang="pug">
   #dashboard
-    b-card-group
-      b-card(title="New Client" style="max-width: 20rem;" class="mb-2")
-        b-form(@submit="onSubmit" @reset="onReset" v-if="show")
-          b-form-group(
-            id="input-group-1"
-            label="Your Fullname:"
-            label-for="input-2")
-            b-form-input(
-              id="input-2"
-              v-model="form.fullname"
-              placeholder="Enter name")
-          b-form-group(
-            id="input-group-2"
-            label="Email address:"
-            label-for="input-1"
-            description="We'll never share your email with anyone else.")
-            b-form-input(id="input-1" v-model="form.email" type="text"
-                placeholder="Enter email")
+    q-drawer(show-if-above bordered)
+      q-card
+        q-card-section
+          q-form(@submit="onSubmit" @reset="onReset" class="q-gutter-md")
+            q-input(filled v-model="client.fullname" label="Your Fullname *" hint="Name and surname"
+              lazy-rules :rules="[ val => val.length > 0 || 'Please type Fullname > 5 chars']")
+            q-input(filled type="email" v-model="client.email" label="Your email *" hint="your@email.adr"
+              :rules="[ val => validEmail ]")
+            q-input(filled type="number" mask="phone" v-model="client.phone" label="Your phone *"
+              lazy-rules :rules="[ val => val && val.length > 5 || 'Please type phone > 5 only digits']")
 
-          b-form-group(id="input-group-3" label="Phone:" label-for="input-3")
-            b-form-input(
-              id="input-3"
-              v-model="form.phone"
-              type="text"
-              placeholder="Enter phone")
-
-          b-button(type="submit" variant="primary") Submit
-          b-button(type="reset" variant="danger") Reset
-        b-card(class="mt-3" header="Form Data Result")
-          pre(class="m-0") {{ form }}
-      b-card
-        b-table(striped hover :items="clients")
+            div
+              q-btn(label="Submit" type="submit" color="primary")
+              q-btn(label="Reset" type="reset" color="primary" flat class="q-ml-sm")
+    q-page-container
+      q-card
+        q-card-section
+          q-table(title="Clients" dense :data="clients" row-key="name" :pagination.sync="pagination")
 </template>
 
 <script>
@@ -42,58 +28,31 @@ export default {
     return {
       clients: [],
       errors: [],
-      form: {
+      client: {
         fullname: '',
         email: '',
         phone: ''
       },
-      show: true
+      show: true,
+      pagination: {
+        rowsPerPage: 20 // current rows per page being displayed
+      },
     }
   },
   props: ['clients_path', 'client_create_path'],
   methods: {
     onSubmit(evt) {
-      evt.preventDefault()
-      if (this.form.fullname.length < 5) {
-        this.errors.push(ERRORS.FULLNAME_EMPTY);
-      }
-      if (!this.form.email) {
-        this.errors.push(ERRORS.EMAIL_EMPTY);
-      } else if (!this.validEmail(this.form.email)) {
-        this.errors.push(ERRORS.EMAIL_NOT_VALID);
-      }
-      let numbers = VALIDATORS.PHONE;
-      if (!this.form.phone) {
-        this.errors.push(ERRORS.PHONE_EMPTY);
-      } else if (!this.form.phone.match(numbers)) {
-          this.errors.push(ERRORS.PHONE_NOT_VALID);
-      }
-      if (!this.checkErrors())
-      {
-        this.sendCurrentClient(this.form);
-        this.getClients();
-        this.checkErrors();
-      }
+      this.sendCurrentClient(this.client);
     },
     onReset(evt) {
-      evt.preventDefault()
-      // Reset our form values
-      this.form.fullname = ''
-      this.form.email = ''
-      this.form.phone = ''
-      // Trick to reset/clear native browser form validation state
-      this.show = false
-      this.$nextTick(() => {
-        this.show = true
-      })
-    },
-    validEmail: function (email) {
-      let re = VALIDATORS.EMAIL;
-      return re.test(email);
+      for(let key in this.client){
+        this.client[key] = '';
+      }
     },
     async sendCurrentClient (client) {
       try {
         const response = await this.$api.post(this.client_create_path, client);
+        await this.getClients();
       } catch(err)  {
         this.errors.push(err);
       }
@@ -113,8 +72,12 @@ export default {
         this.errors = [];
       }
       return is_err;
+    },
+  },
+  computed: {
+    validEmail() {
+      return VALIDATORS.EMAIL.test(this.client.email) || ERRORS.EMAIL_NOT_VALID;
     }
-
   },
   mounted() {
     this.getClients();
@@ -123,8 +86,4 @@ export default {
 </script>
 
 <style scoped>
-p {
-  font-size: 2em;
-  text-align: center;
-}
 </style>

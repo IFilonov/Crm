@@ -1,7 +1,8 @@
 <template lang="pug">
   #staff
-    navbar(:user_email = "staff_email" :user_logout_path="staff_logout_path")
-    dashboard(:clients_path="clients_path" :client_create_path="client_create_path")
+    q-layout(view="hHh lPr fff")
+      navbar(:user_email = "staff_email" :user_logout_path="staff_logout_path")
+      dashboard(:clients_path="clients_path" :client_create_path="client_create_path")
 </template>
 
 <script>
