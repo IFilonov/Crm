@@ -8,6 +8,7 @@
 <script>
 import navbar from "../shared/navbar";
 import dashboard from "./dashboard";
+import { QSpinnerGrid } from 'quasar'
 
 export default {
   components: {
@@ -27,10 +28,23 @@ export default {
     async staffEmail() {
       const response = await this.$api.get(this.staff_email_path);
       this.staff_email = response.data.staff_email;
+    },
+    showLoading () {
+      this.$q.loading.show({
+        spinner: QSpinnerGrid,
+        spinnerColor: 'purple',
+        spinnerSize: 80
+      });
     }
+  },
+  beforeMount() {
+    this.showLoading();
   },
   mounted() {
     this.staffEmail();
+    setTimeout(() => {
+      this.$q.loading.hide()
+    }, 1000);
   }
 }
 </script>
