@@ -1,6 +1,7 @@
 class ClientsController < ApplicationController
 
-  protect_from_forgery with: :null_session
+  before_action :authenticate_staff!, only: [:create, :index]
+  before_action :authenticate_client!, only: [:client_email, :client_logout]
 
   def index
     render :json => Client.all.pluck_all(:fullname, :email, :phone)
@@ -13,6 +14,15 @@ class ClientsController < ApplicationController
     client.password = password
     client.password_confirmation = password
     client.save!
+  end
+
+  def client_email
+    render :json => {:client_email => current_client.email }
+  end
+
+  def client_logout
+    sign_out current_client
+    redirect_to root_path
   end
 
   private
