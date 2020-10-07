@@ -2,7 +2,7 @@
   #staff
     q-layout(view="hHh lPr fff")
       navbar(:user_email = "staff_email" :user_logout_path="staff_logout_path")
-      dashboard(:clients_path="clients_path" :client_create_path="client_create_path")
+      dashboard(:clients_path="clients_path" :client_create_path="client_create_path" :companies_path="companies_path")
 </template>
 
 <script>
@@ -21,6 +21,7 @@ export default {
       staff_logout_path: "/staffs/staff_logout",
       clients_path: "/clients",
       client_create_path: "/clients/create",
+      companies_path: "/companies",
       staff_email: null
     }
   },

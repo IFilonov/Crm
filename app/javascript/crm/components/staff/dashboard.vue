@@ -18,6 +18,8 @@
       q-card
         q-card-section
           q-table(title="Clients" dense :data="clients" row-key="name" :pagination.sync="pagination")
+        q-card-section
+          q-table(title="Companies" dense :data="companies" row-key="name" :pagination.sync="pagination")
 </template>
 
 <script>
@@ -27,19 +29,19 @@ export default {
   data() {
     return {
       clients: [],
+      companies: [],
       errors: [],
       client: {
         fullname: '',
         email: '',
         phone: ''
       },
-      show: true,
       pagination: {
         rowsPerPage: 20 // current rows per page being displayed
       },
     }
   },
-  props: ['clients_path', 'client_create_path'],
+  props: ['clients_path', 'client_create_path','companies_path'],
   methods: {
     onSubmit(evt) {
       this.sendCurrentClient(this.client);
@@ -65,6 +67,14 @@ export default {
         this.errors.push(err);
       }
     },
+    async getCompanies() {
+      try {
+        const response = await this.$api.get(this.companies_path);
+        this.companies = response.data;
+      } catch(err) {
+        this.errors.push(err);
+      }
+    },
     checkErrors() {
       let is_err = this.errors.length > 0;
       if (is_err) {
@@ -81,6 +91,7 @@ export default {
   },
   mounted() {
     this.getClients();
+    this.getCompanies();
   }
 }
 </script>
