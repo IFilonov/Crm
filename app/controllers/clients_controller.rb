@@ -25,6 +25,10 @@ class ClientsController < ApplicationController
     redirect_to root_path
   end
 
+  def companies
+    render :json => current_client.companies.includes(:juristic_type).pluck_all(:name, '"juristic_types"."name" as jur_type', :inn, :ogrn)
+  end
+
   private
   def client_params
     params.require(:client).permit(:fullname, :email, :phone)

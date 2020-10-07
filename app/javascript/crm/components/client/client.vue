@@ -2,18 +2,22 @@
   #staff
     q-layout(view="hHh lPr fff")
       navbar(:user_email = "client_email" :user_logout_path="client_logout_path")
+      dashboard(:client_companies_path = "client_companies_path")
 </template>
 <script>
 import navbar from "../shared/navbar";
+import dashboard from "./dashboard";
 
 export default {
   components: {
-    'navbar': navbar
+    'navbar': navbar,
+    'dashboard': dashboard
   },
   data: function () {
     return {
       client_email_path: "/clients/client_email",
       client_logout_path: "/clients/client_logout",
+      client_companies_path: "/clients/companies",
       client_email: null
     }
   },
