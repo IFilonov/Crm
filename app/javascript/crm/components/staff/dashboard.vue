@@ -1,40 +1,45 @@
 <template lang="pug">
   #dashboard
     q-drawer(show-if-above bordered)
-      q-card
-        q-card-section
-          q-form(class="q-gutter-md" @submit="onSubmit" @reset="onReset")
-            q-input(filled label="Your Fullname *" hint="Name and surname"
-              v-model="client.fullname"
-              lazy-rules :rules="[ val => val.length > 0 || 'Please type Fullname > 5 chars']")
-            q-input(filled type="email" label="Your email *" hint="your@email.adr"
-              v-model="client.email"
-              :rules="[ val => validEmail ]")
-            q-input(filled type="number" mask="phone" label="Your phone *"
-              v-model="client.phone"
-              lazy-rules :rules="[ val => val && val.length > 5 || 'Please type phone > 5 only digits']")
-            div
-              q-btn(label="Submit" type="submit" color="primary")
-              q-btn(label="Reset" type="reset" color="primary" flat class="q-ml-sm")
     q-page-container
       q-card
         q-card-section
-          q-btn(label="Delete" type="Delete" color="primary" glossy dense
+          span Clients
+          q-btn(label="Delete" type="Delete" color="primary" glossy dense style="margin:10px;"
             v-bind:disabled="isClientsDelBtnDisabled"
             @click="onDeleteClients")
-          p
-          q-table(title="Clients" dense row-key="email" selection="multiple"
+          q-btn(label="Create" color="primary" @click="client_dialog = true" glossy dense)
+          q-dialog(v-model="client_dialog" persistent)
+            q-card
+              q-card-section(class="row items-center")
+                q-form(class="q-gutter-md" @submit="onSubmit" @reset="onReset")
+                  q-input(filled label="Your Fullname *" hint="Name and surname"
+                    v-model="client.fullname"
+                    lazy-rules :rules="[ val => val.length > 0 || 'Please type Fullname > 5 chars']")
+                  q-input(filled type="email" label="Your email *" hint="your@email.adr"
+                    v-model="client.email"
+                    :rules="[ val => validEmail ]")
+                  q-input(filled type="number" mask="phone" label="Your phone *"
+                    v-model="client.phone"
+                    lazy-rules :rules="[ val => val && val.length > 5 || 'Please type phone > 5 only digits']")
+                  div
+                    q-btn(label="Submit" type="submit" color="primary")
+                    q-btn(label="Reset" type="reset" color="primary" flat class="q-ml-sm")
+                    q-btn(flat label="Cancel" color="primary" v-close-popup)
+          br
+          q-table(dense row-key="email" selection="multiple"
             :data="clients"
             :pagination.sync="pagination"
             :selected-rows-label="getSelectedString"
             :selected.sync="clients_selected"
             :visible-columns=['fullname', 'email', 'phone'])
         q-card-section
-          q-btn(label="Delete" type="Delete" color="primary" glossy dense
+          span Companies
+          q-btn(label="Delete" type="Delete" color="primary" glossy dense style="margin:10px;"
             v-bind:disabled="isCompaniesDelBtnDisabled"
             @click="onDeleteCompanies")
-          p
-          q-table(title="Companies" dense row-key="name" selection="multiple"
+          br
+          q-table(dense row-key="name" selection="multiple"
             :data="companies"
             :pagination.sync="pagination"
             :selected.sync="companies_selected"
@@ -59,7 +64,8 @@ export default {
         rowsPerPage: 20 // current rows per page being displayed
       },
       clients_selected: [],
-      companies_selected: []
+      companies_selected: [],
+      client_dialog: false
     }
   },
   props: ['staff_paths'],
