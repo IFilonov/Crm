@@ -1,8 +1,8 @@
 <template lang="pug">
   #staff
     q-layout(view="hHh lPr fff")
-      navbar(:user_email = "staff_email" :user_logout_path="staff_logout_path")
-      dashboard(:clients_path="clients_path" :client_create_path="client_create_path" :companies_path="companies_path")
+      navbar(:user_email = "staff_email" :user_logout_path="staff_paths.staff_logout")
+      dashboard(:staff_paths="staff_paths")
 </template>
 
 <script>
@@ -17,17 +17,21 @@ export default {
   },
   data: function () {
     return {
-      staff_email_path: "/staffs/staff_email",
-      staff_logout_path: "/staffs/staff_logout",
-      clients_path: "/clients",
-      client_create_path: "/clients/create",
-      companies_path: "/companies",
+      staff_paths: {
+        staff_email: "/staffs/staff_email",
+        staff_logout: "/staffs/staff_logout",
+        clients: "/clients",
+        client_create: "/clients/create",
+        clients_delete: "/clients/delete",
+        companies: "/companies",
+        companies_delete: "/companies/delete",
+      },
       staff_email: null
     }
   },
   methods: {
     async staffEmail() {
-      const response = await this.$api.get(this.staff_email_path);
+      const response = await this.$api.get(this.staff_paths.staff_email);
       this.staff_email = response.data.staff_email;
     },
     showLoading () {

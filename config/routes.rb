@@ -12,5 +12,7 @@ Rails.application.routes.draw do
   get '/clients/client_logout', to: 'clients#client_logout'
   get '/clients/companies', to: 'clients#companies'
   get '/companies', to: 'companies#index'
+  post '/clients/delete', to: 'clients#delete'
+  post '/companies/delete', to: 'companies#delete'
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
 end
