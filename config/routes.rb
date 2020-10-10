@@ -16,5 +16,8 @@ Rails.application.routes.draw do
   post '/companies/delete', to: 'companies#delete'
   post '/companies/create', to: 'companies#create'
   get '/juristic_types', to: 'juristic_types#index'
+  post '/companies/client_companies', to: 'companies#client_companies'
+  patch '/clients/update', to: 'clients#update'
+  patch '/clients_companies/update', to: 'clients_companies#update'
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
 end

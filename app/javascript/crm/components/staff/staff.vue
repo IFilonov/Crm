@@ -22,11 +22,14 @@ export default {
         staff_logout: "/staffs/staff_logout",
         clients: "/clients",
         client_create: "/clients/create",
+        client_update: "/clients/update",
         company_create: "/companies/create",
         clients_delete: "/clients/delete",
         companies: "/companies",
         companies_delete: "/companies/delete",
-        juristic_types: "/juristic_types"
+        juristic_types: "/juristic_types",
+        client_companies: "/companies/client_companies",
+        client_companies_update: "/clients_companies/update",
       },
       staff_email: null
     }

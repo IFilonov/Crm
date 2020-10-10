@@ -1,8 +1,8 @@
 class ClientsController < ApplicationController
-
-  before_action :authenticate_staff!, only: [:create, :index, :delete]
-  before_action :authenticate_client!, only: [:client_email, :client_logout]
-
+  before_action :authenticate_staff!, only: [:create, :index, :delete, :update]
+  before_action :authenticate_client!, only: [:client_email, :client_logout, :companies]
+  before_action :find_client, only: [:update]
+  
   def index
     render :json => Client.all.pluck_all(:id, :fullname, :email, :phone)
   end
@@ -33,7 +33,15 @@ class ClientsController < ApplicationController
     Client.destroy(clients_delete_params)
   end
 
+  def update
+    @client.update(client_params)
+  end
+
   private
+  def find_client
+    @client = Client.find(params[:id])
+  end
+
   def client_params
     params.require(:client).permit(:fullname, :email, :phone)
   end
