@@ -12,16 +12,16 @@
           q-dialog(v-model="client_dialog" persistent)
             q-card
               q-card-section(class="row items-center")
-                q-form(class="q-gutter-md" @submit="onSubmit" @reset="onReset")
+                q-form(class="q-gutter-md" @submit="onSubmitClient" @reset="onReset(client)")
                   q-input(filled label="Your Fullname *" hint="Name and surname"
                     v-model="client.fullname"
-                    lazy-rules :rules="[ val => val.length > 0 || 'Please type Fullname > 5 chars']")
+                    lazy-rules :rules="[ val => val.length > 5 || 'Please type Fullname > 5 chars']")
                   q-input(filled type="email" label="Your email *" hint="your@email.adr"
                     v-model="client.email"
                     :rules="[ val => validEmail ]")
                   q-input(filled type="number" mask="phone" label="Your phone *"
                     v-model="client.phone"
-                    lazy-rules :rules="[ val => val && val.length > 5 || 'Please type phone > 5 only digits']")
+                    lazy-rules :rules="[ val => val && val.length > 5 || 'Please type Phone > 5 only digits']")
                   div
                     q-btn(label="Submit" type="submit" color="primary")
                     q-btn(label="Reset" type="reset" color="primary" flat class="q-ml-sm")
@@ -38,6 +38,29 @@
           q-btn(label="Delete" type="Delete" color="primary" glossy dense style="margin:10px;"
             v-bind:disabled="isCompaniesDelBtnDisabled"
             @click="onDeleteCompanies")
+          q-btn(label="Create" color="primary" @click="company_dialog = true" glossy dense)
+          q-dialog(v-model="company_dialog" persistent)
+            q-card
+              q-card-section(class="row items-center")
+                q-form(class="q-gutter-md" @submit="onSubmitCompany" @reset="onReset(company)")
+                  q-input(filled label="Company name *"
+                    v-model="company.name"
+                    lazy-rules :rules="[ val => val.length > 2 || 'Please type name > 2 chars']")
+                  q-input(filled type="number" label="INN" hint="Company inn"
+                    v-model="company.inn"
+                    lazy-rules :rules="[ val => val.length > 10 || 'Please type INN > 10 only digits']")
+                  q-input(filled type="number" label="Company OGRN *"
+                    v-model="company.ogrn"
+                    lazy-rules :rules="[ val => val && val.length > 10 || 'Please type OGRN > 10 only digits']")
+                  q-select(
+                    v-model="company.juristic_type_id" label="Juristic type"
+                    :options="juristic_types" option-value="id" option-label="name"
+                    emit-value map-options
+                    transition-show="flip-up" transition-hide="flip-down")
+                  div
+                    q-btn(label="Submit" type="submit" color="primary")
+                    q-btn(label="Reset" type="reset" color="primary" flat class="q-ml-sm")
+                    q-btn(flat label="Cancel" color="primary" v-close-popup)
           br
           q-table(dense row-key="name" selection="multiple"
             :data="companies"
@@ -54,6 +77,7 @@ export default {
     return {
       clients: [],
       companies: [],
+      juristic_types: [],
       errors: [],
       client: {
         fullname: '',
@@ -65,23 +89,41 @@ export default {
       },
       clients_selected: [],
       companies_selected: [],
-      client_dialog: false
+      client_dialog: false,
+      company_dialog: false,
+      company: {
+        name: '',
+        inn: '',
+        juristic_type_id: '',
+        ogrn: ''
+      }
     }
   },
   props: ['staff_paths'],
   methods: {
-    onSubmit(evt) {
-      this.sendCurrentClient(this.client);
+    onSubmitClient(evt) {
+      this.sendClient(this.client);
     },
-    onReset(evt) {
-      for(let key in this.client){
-        this.client[key] = '';
+    onSubmitCompany(evt) {
+      this.sendCompany(this.company);
+    },
+    onReset(entity) {
+      for(let key in entity){
+        entity[key] = '';
       }
     },
-    async sendCurrentClient (client) {
+    async sendClient(client) {
       try {
         const response = await this.$api.post(this.staff_paths.client_create, client);
         await this.getClients();
+      } catch(err)  {
+        this.errors.push(err);
+      }
+    },
+    async sendCompany(company) {
+      try {
+        const response = await this.$api.post(this.staff_paths.company_create, company);
+        await this.getCompanies();
       } catch(err)  {
         this.errors.push(err);
       }
@@ -111,6 +153,14 @@ export default {
       try {
         const response = await this.$api.get(this.staff_paths.companies);
         this.companies = response.data;
+      } catch(err) {
+        this.errors.push(err);
+      }
+    },
+    async getJuristicTypes() {
+      try {
+        const response = await this.$api.get(this.staff_paths.juristic_types);
+        this.juristic_types = response.data;
       } catch(err) {
         this.errors.push(err);
       }
@@ -145,6 +195,7 @@ export default {
     }
   },
   mounted() {
+    this.getJuristicTypes();
     this.getClients();
     this.getCompanies();
   }

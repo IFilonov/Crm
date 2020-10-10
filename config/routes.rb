@@ -14,5 +14,7 @@ Rails.application.routes.draw do
   get '/companies', to: 'companies#index'
   post '/clients/delete', to: 'clients#delete'
   post '/companies/delete', to: 'companies#delete'
+  post '/companies/create', to: 'companies#create'
+  get '/juristic_types', to: 'juristic_types#index'
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
 end
