@@ -18,6 +18,9 @@ Rails.application.routes.draw do
   get '/juristic_types', to: 'juristic_types#index'
   post '/companies/client_companies', to: 'companies#client_companies'
   patch '/clients/update', to: 'clients#update'
-  patch '/clients_companies/update', to: 'clients_companies#update'
+  patch '/clients_companies/client_companies', to: 'clients_companies#client_companies'
+  patch '/companies/update', to: 'companies#update'
+  post '/companies/company_clients', to: 'companies#company_clients'
+  patch '/clients_companies/company_clients', to: 'clients_companies#company_clients'
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
 end

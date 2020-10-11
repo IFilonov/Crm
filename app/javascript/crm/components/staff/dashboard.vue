@@ -9,7 +9,7 @@
             v-bind:disabled="isClientsDelBtnDisabled"
             @click="onDeleteClients")
           q-btn(label="Create" color="primary" @click="onCreateClient" glossy dense)
-          q-dialog(v-model="client_new_dlg" persistent)
+          q-dialog(v-model="qdlg.client_new" persistent)
             q-card
               q-card-section(class="row items-center")
                 q-form(class="q-gutter-md" @submit="onSubmitClient" @reset="onReset(client)")
@@ -34,7 +34,7 @@
             :selected-rows-label="getSelectedString"
             :selected.sync="clients_selected"
             :visible-columns=['fullname', 'email', 'phone'])
-          q-dialog(v-model="client_edit_dlg" persistent)
+          q-dialog(v-model="qdlg.client_edit" persistent)
             q-card
               q-card-section(class="row items-center")
                 q-form(class="q-gutter-md" @submit="onEditClient" @reset="onReset(client)")
@@ -61,8 +61,8 @@
           q-btn(label="Delete" type="Delete" color="primary" glossy dense style="margin:10px;"
             v-bind:disabled="isCompaniesDelBtnDisabled"
             @click="onDeleteCompanies")
-          q-btn(label="Create" color="primary" @click="company_new_dlg = true" glossy dense)
-          q-dialog(v-model="company_new_dlg" persistent)
+          q-btn(label="Create" color="primary" @click="qdlg.company_new = true" glossy dense)
+          q-dialog(v-model="qdlg.company_new" persistent)
             q-card
               q-card-section(class="row items-center")
                 q-form(class="q-gutter-md" @submit="onSubmitCompany" @reset="onReset(company)")
@@ -80,16 +80,45 @@
                     :options="juristic_types" option-value="id" option-label="name"
                     emit-value map-options
                     transition-show="flip-up" transition-hide="flip-down")
-                  div
-                    q-btn(label="Submit" type="submit" color="primary")
-                    q-btn(label="Reset" type="reset" color="primary" flat class="q-ml-sm")
-                    q-btn(flat label="Cancel" color="primary" v-close-popup)
+              q-card-section
+                q-btn(label="Submit" type="submit" color="primary")
+                q-btn(label="Reset" type="reset" color="primary" flat class="q-ml-sm")
+                q-btn(flat label="Cancel" color="primary" v-close-popup)
           br
           q-table(dense row-key="name" selection="multiple"
             :data="companies"
+            @row-dblclick="onDblClickCompaniesTable"
             :pagination.sync="pagination"
             :selected.sync="companies_selected"
             :visible-columns=['name', 'inn', 'jur_type', 'ogrn'])
+          q-dialog(v-model="qdlg.company_edit" persistent)
+            q-card
+              q-card-section(class="row items-center")
+                q-form(class="q-gutter-md" @submit="onEditCompany" @reset="onReset(company)")
+                  q-input(filled label="Company name *"
+                    v-model="company.name"
+                    lazy-rules :rules="[ val => val.length > 2 || 'Please type name > 2 chars']")
+                  q-input(filled type="number" label="INN" hint="Company inn"
+                    v-model="company.inn"
+                    lazy-rules :rules="[ val => val && val.length > 10 || 'Please type INN > 10 only digits']")
+                  q-input(filled type="number" label="Company OGRN *"
+                    v-model="company.ogrn"
+                    lazy-rules :rules="[ val => val && val.length > 10 || 'Please type OGRN > 10 only digits']")
+                  q-select(
+                    v-model="company.juristic_type_id" label="Juristic type"
+                    :options="juristic_types" option-value="id" option-label="name"
+                    emit-value map-options
+                    transition-show="flip-up" transition-hide="flip-down")
+                  p Bind with clients:
+                  q-select(
+                    v-model="company_clients" label="Clients"
+                    multiple counter use-chips
+                    :options="clients" option-value="id" option-label="fullname"
+                    emit-value map-options
+                    transition-show="flip-up" transition-hide="flip-down")
+                  div
+                    q-btn(label="Update" type="submit" color="primary")
+                    q-btn(flat label="Cancel" color="primary" v-close-popup)
 </template>
 
 <script>
@@ -100,6 +129,7 @@ export default {
     return {
       clients: [],
       client_companies: [],
+      company_clients: [],
       companies: [],
       juristic_types: [],
       errors: [],
@@ -113,31 +143,40 @@ export default {
       },
       clients_selected: [],
       companies_selected: [],
-      client_new_dlg: false,
-      company_new_dlg: false,
       company: {
         name: '',
         inn: '',
         juristic_type_id: '',
         ogrn: ''
       },
-      client_edit_dlg: false
+      qdlg: {
+        client_edit: false,
+        client_new: false,
+        company_new: false,
+        company_edit: false,
+        prevValue: []
+      }
     }
   },
   props: ['staff_paths'],
   methods: {
     onCreateClient() {
       this.resetEntity(this.client);
-      this.client_new_dlg = true;
+      this.qdlg.client_new = true;
     },
     onSubmitClient(evt) {
       this.sendClient(this.client);
-      this.client_new_dlg = false;
+      this.qdlg.client_new = false;
     },
     onEditClient(evt) {
       this.editClient(this.client);
       this.editClientCompanies();
-      this.client_edit_dlg = false;
+      this.qdlg.client_edit = false;
+    },
+    onEditCompany(evt) {
+      this.editCompany(this.company);
+      this.editCompanyClients();
+      this.qdlg.company_edit = false;
     },
     onSubmitCompany(evt) {
       this.sendCompany(this.company);
@@ -166,13 +205,37 @@ export default {
         this.errors.push(err);
       }
     },
-    async editClientCompanies(client) {
+    async editCompany(company) {
       try {
-        let params = { client_id: this.client["id"], company_ids: this.client_companies};
-        const response = await this.$api.patch(this.staff_paths.client_companies_update, params);
+        const response = await this.$api.patch(this.staff_paths.company_update, company);
+        await this.getCompanies();
       } catch(err)  {
         this.errors.push(err);
       }
+    },
+    async editClientCompanies() {
+      try {
+        const response = await this.$api.patch(this.staff_paths.client_companies_update, this.getParamsClientCompanies());
+      } catch(err)  {
+        this.errors.push(err);
+      }
+    },
+    getParamsClientCompanies() {
+      let new_company_ids = this.arrDiffs(this.client_companies, this.qdlg.prevValue);
+      let del_company_ids = this.arrDiffs(this.qdlg.prevValue, this.client_companies);
+      return { client_id: this.client["id"], new_company_ids: new_company_ids, del_company_ids: del_company_ids }
+    },
+    async editCompanyClients() {
+      try {
+        const response = await this.$api.patch(this.staff_paths.company_clients_update, this.getParamsCompanyClients());
+      } catch(err)  {
+        this.errors.push(err);
+      }
+    },
+    getParamsCompanyClients() {
+      let new_client_ids = this.arrDiffs(this.company_clients, this.qdlg.prevValue);
+      let del_client_ids = this.arrDiffs(this.qdlg.prevValue, this.company_clients);
+      return { company_id: this.company["id"], new_client_ids: new_client_ids, del_client_ids: del_client_ids }
     },
     async sendCompany(company) {
       try {
@@ -239,16 +302,35 @@ export default {
     onDblClickClientsTable(evt, row, index) {
       this.client = row;
       this.getClientCompanies(this.client);
-      this.client_edit_dlg = true;
+      this.qdlg.prevValue = this.client_companies;
+      this.qdlg.client_edit = true;
+    },
+    onDblClickCompaniesTable(evt, row, index) {
+      this.company = row;
+      this.getCompanyClients(this.company);
+      this.qdlg.company_edit = true;
     },
     async getClientCompanies(client) {
       try {
         const response = await this.$api.post(this.staff_paths.client_companies, client);
         this.client_companies = response.data;
+        this.qdlg.prevValue = this.client_companies;
       } catch(err) {
         this.errors.push(err);
       }
     },
+    async getCompanyClients(company) {
+      try {
+        const response = await this.$api.post(this.staff_paths.company_clients, company);
+        this.company_clients = response.data;
+        this.qdlg.prevValue = this.company_clients;
+      } catch(err) {
+        this.errors.push(err);
+      }
+    },
+    arrDiffs(a, b) {
+      return a.filter(x => !b.includes(x));
+    }
   },
   computed: {
     validEmail() {
