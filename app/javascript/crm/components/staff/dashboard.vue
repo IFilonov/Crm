@@ -170,12 +170,12 @@ export default {
     },
     onEditClient(evt) {
       this.editClient(this.client);
-      this.editClientCompanies();
+      this.rebindCompaniesToClient();
       this.qdlg.client_edit = false;
     },
     onEditCompany(evt) {
       this.editCompany(this.company);
-      this.editCompanyClients();
+      this.rebindCilentsToCompany();
       this.qdlg.company_edit = false;
     },
     onSubmitCompany(evt) {
@@ -213,9 +213,9 @@ export default {
         this.errors.push(err);
       }
     },
-    async editClientCompanies() {
+    async rebindCompaniesToClient() {
       try {
-        const response = await this.$api.patch(this.staff_paths.client_companies_update, this.getParamsClientCompanies());
+        const response = await this.$api.patch(this.staff_paths.rebind_companies_to_client, this.getParamsClientCompanies());
       } catch(err)  {
         this.errors.push(err);
       }
@@ -225,9 +225,9 @@ export default {
       let del_company_ids = this.arrDiffs(this.qdlg.prevValue, this.client_companies);
       return { client_id: this.client["id"], new_company_ids: new_company_ids, del_company_ids: del_company_ids }
     },
-    async editCompanyClients() {
+    async rebindCilentsToCompany() {
       try {
-        const response = await this.$api.patch(this.staff_paths.company_clients_update, this.getParamsCompanyClients());
+        const response = await this.$api.patch(this.staff_paths.rebind_clients_to_company, this.getParamsCompanyClients());
       } catch(err)  {
         this.errors.push(err);
       }

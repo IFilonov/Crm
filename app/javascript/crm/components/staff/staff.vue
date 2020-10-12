@@ -29,10 +29,10 @@ export default {
         companies_delete: "/companies/delete",
         juristic_types: "/juristic_types",
         client_companies: "/companies/client_companies",
-        client_companies_update: "/clients_companies/client_companies",
+        rebind_companies_to_client: "/clients_companies/rebind_companies_to_client",
         company_update: "/companies/update",
         company_clients: "/companies/company_clients",
-        company_clients_update: "/clients_companies/company_clients",
+        rebind_clients_to_company: "/clients_companies/rebind_clients_to_company",
       },
       staff_email: null
     }

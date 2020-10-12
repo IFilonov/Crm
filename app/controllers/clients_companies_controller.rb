@@ -1,9 +1,9 @@
 class ClientsCompaniesController < ApplicationController
-  before_action :authenticate_staff!, only: [:client_companies, :company_clients]
-  before_action :find_client, only: [:client_companies]
-  before_action :find_company, only: [:company_clients]
+  before_action :authenticate_staff!, only: [:rebind_companies_to_client, :rebind_clients_to_company]
+  before_action :find_client, only: [:rebind_companies_to_client]
+  before_action :find_company, only: [:rebind_clients_to_company]
 
-  def client_companies
+  def rebind_companies_to_client
     new_companies_params.each do |company|
       @client.clients_companies.create(company_id: company)
     end
@@ -12,7 +12,7 @@ class ClientsCompaniesController < ApplicationController
     end
   end
 
-  def company_clients
+  def rebind_clients_to_company
     new_clients_params.each do |client|
       @company.clients_companies.create(client_id: client)
     end
