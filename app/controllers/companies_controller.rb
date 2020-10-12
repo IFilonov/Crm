@@ -4,7 +4,7 @@ class CompaniesController < ApplicationController
   before_action :find_company, only: [:update, :company_clients]
 
   def index
-    render :json => Company.all.includes(:juristic_type).pluck_all(:id, :name, '"juristic_types"."name" as jur_type', :inn, :ogrn)
+    render :json => Company.all.includes(:juristic_type).pluck_all(:id, :name, :juristic_type_id, '"juristic_types"."name" as jur_type', :inn, :ogrn)
   end
 
   def delete
