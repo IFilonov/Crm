@@ -7,12 +7,12 @@
           span Clients
           q-btn(label="Delete" type="Delete" color="primary" glossy dense style="margin:10px;"
             v-bind:disabled="isClientsDelBtnDisabled"
-            @click="onDeleteClients")
-          q-btn(label="Create" color="primary" @click="onCreateClient" glossy dense)
-          q-dialog(v-model="qdlg.client_new" persistent)
+            @click="deleteClients")
+          q-btn(label="Create" color="primary" @click="qDialogs.client_new = true" glossy dense)
+          q-dialog(v-model="qDialogs.client_new" persistent)
             q-card
               q-card-section(class="row items-center")
-                q-form(class="q-gutter-md" @submit="onSubmitClient" @reset="onReset(client)")
+                q-form(class="q-gutter-md" @submit="sendClient(client)" @reset="reset(client)")
                   q-input(filled label="Your Fullname *" hint="Name and surname"
                     v-model="client.fullname"
                     lazy-rules :rules="[ val => val.length > 5 || 'Please type Fullname > 5 chars']")
@@ -34,10 +34,10 @@
             :selected-rows-label="getSelectedString"
             :selected.sync="clients_selected"
             :visible-columns=['fullname', 'email', 'phone'])
-          q-dialog(v-model="qdlg.client_edit" persistent)
+          q-dialog(v-model="qDialogs.client_edit" persistent)
             q-card
               q-card-section(class="row items-center")
-                q-form(class="q-gutter-md" @submit="onEditClient" @reset="onReset(client)")
+                q-form(class="q-gutter-md" @submit="onEditClient")
                   q-input(filled label="Your Fullname *" hint="Name and surname"
                     v-model="client.fullname"
                     lazy-rules :rules="[ val => val.length > 5 || 'Please type Fullname > 5 chars']")
@@ -60,12 +60,12 @@
           span Companies
           q-btn(label="Delete" type="Delete" color="primary" glossy dense style="margin:10px;"
             v-bind:disabled="isCompaniesDelBtnDisabled"
-            @click="onDeleteCompanies")
-          q-btn(label="Create" color="primary" @click="qdlg.company_new = true" glossy dense)
-          q-dialog(v-model="qdlg.company_new" persistent)
+            @click="deleteCompanies")
+          q-btn(label="Create" color="primary" @click="qDialogs.company_new = true" glossy dense)
+          q-dialog(v-model="qDialogs.company_new" persistent)
             q-card
               q-card-section(class="row items-center")
-                q-form(class="q-gutter-md" @submit="onSubmitCompany" @reset="onReset(company)")
+                q-form(class="q-gutter-md" @submit="sendCompany(company)" @reset="reset(company)")
                   q-input(filled label="Company name *"
                     v-model="company.name"
                     lazy-rules :rules="[ val => val.length > 2 || 'Please type name > 2 chars']")
@@ -80,10 +80,9 @@
                     :options="juristic_types" option-value="id" option-label="name"
                     emit-value map-options
                     transition-show="flip-up" transition-hide="flip-down")
-              q-card-section
-                q-btn(label="Submit" type="submit" color="primary")
-                q-btn(label="Reset" type="reset" color="primary" flat class="q-ml-sm")
-                q-btn(flat label="Cancel" color="primary" v-close-popup)
+                  q-btn(label="Submit" type="submit" color="primary")
+                  q-btn(label="Reset" type="reset" color="primary" flat class="q-ml-sm")
+                  q-btn(flat label="Cancel" color="primary" v-close-popup)
           br
           q-table(dense row-key="name" selection="multiple"
             :data="companies"
@@ -91,10 +90,10 @@
             :pagination.sync="pagination"
             :selected.sync="companies_selected"
             :visible-columns=['name', 'inn', 'jur_type', 'ogrn'])
-          q-dialog(v-model="qdlg.company_edit" persistent)
+          q-dialog(v-model="qDialogs.company_edit" persistent)
             q-card
               q-card-section(class="row items-center")
-                q-form(class="q-gutter-md" @submit="onEditCompany" @reset="onReset(company)")
+                q-form(class="q-gutter-md" @submit="onEditCompany")
                   q-input(filled label="Company name *"
                     v-model="company.name"
                     lazy-rules :rules="[ val => val.length > 2 || 'Please type name > 2 chars']")
@@ -125,6 +124,7 @@
 import ERRORS from "../../utils/errors";
 import VALIDATORS from "../../utils/validators";
 import paths from '../../api/paths';
+import functions from "../../utils/functions";
 
 export default {
   data() {
@@ -151,7 +151,7 @@ export default {
         juristic_type_id: '',
         ogrn: ''
       },
-      qdlg: {
+      qDialogs: {
         client_edit: false,
         client_new: false,
         company_new: false,
@@ -161,38 +161,24 @@ export default {
     }
   },
   methods: {
-    onCreateClient() {
-      this.resetEntity(this.client);
-      this.qdlg.client_new = true;
-    },
-    onSubmitClient(evt) {
-      this.sendClient(this.client);
-      this.qdlg.client_new = false;
-    },
     onEditClient(evt) {
       this.editClient(this.client);
       this.rebindCompaniesToClient();
-      this.qdlg.client_edit = false;
+      this.qDialogs.client_edit = false;
     },
     onEditCompany(evt) {
       this.editCompany(this.company);
       this.rebindCilentsToCompany();
-      this.qdlg.company_edit = false;
+      this.qDialogs.company_edit = false;
     },
-    onSubmitCompany(evt) {
-      this.sendCompany(this.company);
-    },
-    onReset(entity) {
-      this.resetEntity(entity);
-    },
-    resetEntity(entity) {
-      for(let key in entity){
-         entity[key] = '';
-      }
+    reset(entity) {
+      functions.resetEntity(entity);
     },
     async sendClient(client) {
       try {
+        this.qDialogs.client_new = false;
         const response = await this.$api.post(paths.client_create, client);
+        this.reset(this.client);
         await this.getClients();
       } catch(err)  {
         this.errors.push(err);
@@ -222,8 +208,8 @@ export default {
       }
     },
     getParamsClientCompanies() {
-      let new_company_ids = this.arrDiffs(this.client_companies, this.qdlg.prevValue);
-      let del_company_ids = this.arrDiffs(this.qdlg.prevValue, this.client_companies);
+      let new_company_ids = functions.arrDiffs(this.client_companies, this.qDialogs.prevValue);
+      let del_company_ids = functions.arrDiffs(this.qDialogs.prevValue, this.client_companies);
       return { client_id: this.client["id"], new_company_ids: new_company_ids, del_company_ids: del_company_ids }
     },
     async rebindCilentsToCompany() {
@@ -234,13 +220,15 @@ export default {
       }
     },
     getParamsCompanyClients() {
-      let new_client_ids = this.arrDiffs(this.company_clients, this.qdlg.prevValue);
-      let del_client_ids = this.arrDiffs(this.qdlg.prevValue, this.company_clients);
+      let new_client_ids = functions.arrDiffs(this.company_clients, this.qDialogs.prevValue);
+      let del_client_ids = functions.arrDiffs(this.qDialogs.prevValue, this.company_clients);
       return { company_id: this.company["id"], new_client_ids: new_client_ids, del_client_ids: del_client_ids }
     },
     async sendCompany(company) {
       try {
+        this.qDialogs.company_new = false;
         const response = await this.$api.post(paths.company_create, company);
+        this.reset(this.company);
         await this.getCompanies();
       } catch(err)  {
         this.errors.push(err);
@@ -253,9 +241,6 @@ export default {
       } catch(err) {
         this.errors.push(err);
       }
-    },
-    onDeleteClients(evt) {
-      this.deleteClients();
     },
     async deleteClients() {
       try {
@@ -283,9 +268,6 @@ export default {
         this.errors.push(err);
       }
     },
-    onDeleteCompanies(evt) {
-      this.deleteCompanies();
-    },
     async deleteCompanies() {
       try {
         let companies_selected = { ids:  this.companies_selected.map(company => company.id ) } ;
@@ -303,19 +285,19 @@ export default {
     onDblClickClientsTable(evt, row, index) {
       this.client = row;
       this.getClientCompanies(this.client);
-      this.qdlg.prevValue = this.client_companies;
-      this.qdlg.client_edit = true;
+      this.qDialogs.prevValue = this.client_companies;
+      this.qDialogs.client_edit = true;
     },
     onDblClickCompaniesTable(evt, row, index) {
       this.company = row;
       this.getCompanyClients(this.company);
-      this.qdlg.company_edit = true;
+      this.qDialogs.company_edit = true;
     },
     async getClientCompanies(client) {
       try {
         const response = await this.$api.post(paths.client_companies, client);
         this.client_companies = response.data;
-        this.qdlg.prevValue = this.client_companies;
+        this.qDialogs.prevValue = this.client_companies;
       } catch(err) {
         this.errors.push(err);
       }
@@ -324,13 +306,10 @@ export default {
       try {
         const response = await this.$api.post(paths.company_clients, company);
         this.company_clients = response.data;
-        this.qdlg.prevValue = this.company_clients;
+        this.qDialogs.prevValue = this.company_clients;
       } catch(err) {
         this.errors.push(err);
       }
-    },
-    arrDiffs(a, b) {
-      return a.filter(x => !b.includes(x));
     }
   },
   computed: {
