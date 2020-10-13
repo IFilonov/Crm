@@ -10,6 +10,8 @@
 </template>
 
 <script>
+import paths from '../../api/paths';
+
 export default {
   data() {
     return {
@@ -20,11 +22,10 @@ export default {
       },
     }
   },
-  props: ['client_companies_path'],
   methods: {
     async getCompanies() {
       try {
-        const response = await this.$api.get(this.client_companies_path);
+        const response = await this.$api.get(paths.clients_companies);
         this.companies = response.data;
       } catch(err) {
         this.errors.push(err);

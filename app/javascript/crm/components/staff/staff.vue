@@ -1,14 +1,15 @@
 <template lang="pug">
   #staff
     q-layout(view="hHh lPr fff")
-      navbar(:user_email = "staff_email" :user_logout_path="staff_paths.staff_logout")
-      dashboard(:staff_paths="staff_paths")
+      navbar(:user_email = "staff_email" :user_logout_path="staff_logout_path")
+      dashboard()
 </template>
 
 <script>
 import navbar from "../shared/navbar";
 import dashboard from "./dashboard";
-import { QSpinnerGrid } from 'quasar'
+import { QSpinnerGrid } from 'quasar';
+import paths from '../../api/paths';
 
 export default {
   components: {
@@ -17,29 +18,13 @@ export default {
   },
   data: function () {
     return {
-      staff_paths: {
-        staff_email: "/staffs/staff_email",
-        staff_logout: "/staffs/staff_logout",
-        clients: "/clients",
-        client_create: "/clients/create",
-        client_update: "/clients/update",
-        company_create: "/companies/create",
-        clients_delete: "/clients/delete",
-        companies: "/companies",
-        companies_delete: "/companies/delete",
-        juristic_types: "/juristic_types",
-        client_companies: "/companies/client_companies",
-        rebind_companies_to_client: "/clients_companies/rebind_companies_to_client",
-        company_update: "/companies/update",
-        company_clients: "/companies/company_clients",
-        rebind_clients_to_company: "/clients_companies/rebind_clients_to_company",
-      },
-      staff_email: null
+      staff_email: null,
+      staff_logout_path: paths.staff_logout
     }
   },
   methods: {
     async staffEmail() {
-      const response = await this.$api.get(this.staff_paths.staff_email);
+      const response = await this.$api.get(paths.staff_email);
       this.staff_email = response.data.staff_email;
     },
     showLoading () {

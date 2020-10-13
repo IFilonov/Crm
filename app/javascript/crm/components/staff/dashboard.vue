@@ -124,6 +124,8 @@
 <script>
 import ERRORS from "../../utils/errors";
 import VALIDATORS from "../../utils/validators";
+import paths from '../../api/paths';
+
 export default {
   data() {
     return {
@@ -158,7 +160,6 @@ export default {
       }
     }
   },
-  props: ['staff_paths'],
   methods: {
     onCreateClient() {
       this.resetEntity(this.client);
@@ -191,7 +192,7 @@ export default {
     },
     async sendClient(client) {
       try {
-        const response = await this.$api.post(this.staff_paths.client_create, client);
+        const response = await this.$api.post(paths.client_create, client);
         await this.getClients();
       } catch(err)  {
         this.errors.push(err);
@@ -199,7 +200,7 @@ export default {
     },
     async editClient(client) {
       try {
-        const response = await this.$api.patch(this.staff_paths.client_update, client);
+        const response = await this.$api.patch(paths.client_update, client);
         await this.getClients();
       } catch(err)  {
         this.errors.push(err);
@@ -207,7 +208,7 @@ export default {
     },
     async editCompany(company) {
       try {
-        const response = await this.$api.patch(this.staff_paths.company_update, company);
+        const response = await this.$api.patch(paths.company_update, company);
         await this.getCompanies();
       } catch(err)  {
         this.errors.push(err);
@@ -215,7 +216,7 @@ export default {
     },
     async rebindCompaniesToClient() {
       try {
-        const response = await this.$api.patch(this.staff_paths.rebind_companies_to_client, this.getParamsClientCompanies());
+        const response = await this.$api.patch(paths.rebind_companies_to_client, this.getParamsClientCompanies());
       } catch(err)  {
         this.errors.push(err);
       }
@@ -227,7 +228,7 @@ export default {
     },
     async rebindCilentsToCompany() {
       try {
-        const response = await this.$api.patch(this.staff_paths.rebind_clients_to_company, this.getParamsCompanyClients());
+        const response = await this.$api.patch(paths.rebind_clients_to_company, this.getParamsCompanyClients());
       } catch(err)  {
         this.errors.push(err);
       }
@@ -239,7 +240,7 @@ export default {
     },
     async sendCompany(company) {
       try {
-        const response = await this.$api.post(this.staff_paths.company_create, company);
+        const response = await this.$api.post(paths.company_create, company);
         await this.getCompanies();
       } catch(err)  {
         this.errors.push(err);
@@ -247,7 +248,7 @@ export default {
     },
     async getClients() {
       try {
-        const response = await this.$api.get(this.staff_paths.clients);
+        const response = await this.$api.get(paths.clients);
         this.clients = response.data;
       } catch(err) {
         this.errors.push(err);
@@ -259,7 +260,7 @@ export default {
     async deleteClients() {
       try {
         let clients_selected = { ids:  this.clients_selected.map(client => client.id ) } ;
-        const response = await this.$api.post(this.staff_paths.clients_delete, clients_selected);
+        const response = await this.$api.post(paths.clients_delete, clients_selected);
         this.clients_selected = [];
         await this.getClients();
       } catch(err) {
@@ -268,7 +269,7 @@ export default {
     },
     async getCompanies() {
       try {
-        const response = await this.$api.get(this.staff_paths.companies);
+        const response = await this.$api.get(paths.companies);
         this.companies = response.data;
       } catch(err) {
         this.errors.push(err);
@@ -276,7 +277,7 @@ export default {
     },
     async getJuristicTypes() {
       try {
-        const response = await this.$api.get(this.staff_paths.juristic_types);
+        const response = await this.$api.get(paths.juristic_types);
         this.juristic_types = response.data;
       } catch(err) {
         this.errors.push(err);
@@ -288,7 +289,7 @@ export default {
     async deleteCompanies() {
       try {
         let companies_selected = { ids:  this.companies_selected.map(company => company.id ) } ;
-        const response = await this.$api.post(this.staff_paths.companies_delete, companies_selected);
+        const response = await this.$api.post(paths.companies_delete, companies_selected);
         this.companies_selected = [];
         await this.getCompanies();
       } catch(err) {
@@ -312,7 +313,7 @@ export default {
     },
     async getClientCompanies(client) {
       try {
-        const response = await this.$api.post(this.staff_paths.client_companies, client);
+        const response = await this.$api.post(paths.client_companies, client);
         this.client_companies = response.data;
         this.qdlg.prevValue = this.client_companies;
       } catch(err) {
@@ -321,7 +322,7 @@ export default {
     },
     async getCompanyClients(company) {
       try {
-        const response = await this.$api.post(this.staff_paths.company_clients, company);
+        const response = await this.$api.post(paths.company_clients, company);
         this.company_clients = response.data;
         this.qdlg.prevValue = this.company_clients;
       } catch(err) {

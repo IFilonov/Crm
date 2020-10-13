@@ -1,12 +1,14 @@
 <template lang="pug">
   #staff
     q-layout(view="hHh lPr fff")
-      navbar(:user_email = "client_email" :user_logout_path="client_logout_path")
-      dashboard(:client_companies_path = "client_companies_path")
+      navbar(:user_email = "client_email" :user_logout_path="this.client_logout_path")
+      dashboard()
 </template>
+
 <script>
 import navbar from "../shared/navbar";
 import dashboard from "./dashboard";
+import paths from '../../api/paths';
 
 export default {
   components: {
@@ -15,15 +17,13 @@ export default {
   },
   data: function () {
     return {
-      client_email_path: "/clients/client_email",
-      client_logout_path: "/clients/client_logout",
-      client_companies_path: "/clients/companies",
-      client_email: null
+      client_email: null,
+      client_logout_path: paths.client_logout
     }
   },
   methods: {
     async clientEmail() {
-      const response = await this.$api.get(this.client_email_path);
+      const response = await this.$api.get(paths.client_email);
       this.client_email = response.data.client_email;
     }
   },
