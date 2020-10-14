@@ -123,7 +123,6 @@
 <script>
 import ERRORS from "../../utils/errors";
 import VALIDATORS from "../../utils/validators";
-import paths from '../../api/paths';
 import functions from "../../utils/functions";
 
 export default {
@@ -177,7 +176,7 @@ export default {
     async sendClient(client) {
       try {
         this.qDialogs.client_new = false;
-        const response = await this.$api.post(paths.client_create, client);
+        const response = await this.$api.clients.create(client);
         this.reset(this.client);
         await this.getClients();
       } catch(err)  {
@@ -186,7 +185,7 @@ export default {
     },
     async editClient(client) {
       try {
-        const response = await this.$api.patch(paths.client_update, client);
+        const response = await this.$api.clients.update(client);
         await this.getClients();
       } catch(err)  {
         this.errors.push(err);
@@ -194,7 +193,7 @@ export default {
     },
     async editCompany(company) {
       try {
-        const response = await this.$api.patch(paths.company_update, company);
+        const response = await this.$api.companies.update(company);
         await this.getCompanies();
       } catch(err)  {
         this.errors.push(err);
@@ -202,32 +201,28 @@ export default {
     },
     async rebindCompaniesToClient() {
       try {
-        const response = await this.$api.patch(paths.rebind_companies_to_client, this.getParamsClientCompanies());
+        let new_company_ids = functions.arrDiffs(this.client_companies, this.qDialogs.prevValue);
+        let del_company_ids = functions.arrDiffs(this.qDialogs.prevValue, this.client_companies);
+        let companies = { client_id: this.client["id"], new_company_ids: new_company_ids, del_company_ids: del_company_ids }
+        const response = await this.$api.client_companies.rebind_companies(companies);
       } catch(err)  {
         this.errors.push(err);
       }
-    },
-    getParamsClientCompanies() {
-      let new_company_ids = functions.arrDiffs(this.client_companies, this.qDialogs.prevValue);
-      let del_company_ids = functions.arrDiffs(this.qDialogs.prevValue, this.client_companies);
-      return { client_id: this.client["id"], new_company_ids: new_company_ids, del_company_ids: del_company_ids }
     },
     async rebindCilentsToCompany() {
       try {
-        const response = await this.$api.patch(paths.rebind_clients_to_company, this.getParamsCompanyClients());
+        let new_client_ids = functions.arrDiffs(this.company_clients, this.qDialogs.prevValue);
+        let del_client_ids = functions.arrDiffs(this.qDialogs.prevValue, this.company_clients);
+        let clients = { company_id: this.company["id"], new_client_ids: new_client_ids, del_client_ids: del_client_ids };
+        const response = await this.$api.client_companies.rebind_clients(clients);
       } catch(err)  {
         this.errors.push(err);
       }
-    },
-    getParamsCompanyClients() {
-      let new_client_ids = functions.arrDiffs(this.company_clients, this.qDialogs.prevValue);
-      let del_client_ids = functions.arrDiffs(this.qDialogs.prevValue, this.company_clients);
-      return { company_id: this.company["id"], new_client_ids: new_client_ids, del_client_ids: del_client_ids }
     },
     async sendCompany(company) {
       try {
         this.qDialogs.company_new = false;
-        const response = await this.$api.post(paths.company_create, company);
+        const response = await this.$api.companies.create(company);
         this.reset(this.company);
         await this.getCompanies();
       } catch(err)  {
@@ -236,7 +231,7 @@ export default {
     },
     async getClients() {
       try {
-        const response = await this.$api.get(paths.clients);
+        const response = await this.$api.clients.index();
         this.clients = response.data;
       } catch(err) {
         this.errors.push(err);
@@ -244,17 +239,17 @@ export default {
     },
     async deleteClients() {
       try {
-        let clients_selected = { ids:  this.clients_selected.map(client => client.id ) } ;
-        const response = await this.$api.post(paths.clients_delete, clients_selected);
+        let clients_selected = { ids:  this.clients_selected.map(client => client.id ) };
+        const response = await this.$api.clients.delete(clients_selected);
         this.clients_selected = [];
-        await this.getClients();
+        this.getClients();
       } catch(err) {
         this.errors.push(err);
       }
     },
     async getCompanies() {
       try {
-        const response = await this.$api.get(paths.companies);
+        const response = await this.$api.companies.index();
         this.companies = response.data;
       } catch(err) {
         this.errors.push(err);
@@ -262,7 +257,7 @@ export default {
     },
     async getJuristicTypes() {
       try {
-        const response = await this.$api.get(paths.juristic_types);
+        const response = await this.$api.juristic_types.index();
         this.juristic_types = response.data;
       } catch(err) {
         this.errors.push(err);
@@ -271,9 +266,9 @@ export default {
     async deleteCompanies() {
       try {
         let companies_selected = { ids:  this.companies_selected.map(company => company.id ) } ;
-        const response = await this.$api.post(paths.companies_delete, companies_selected);
+        const response = await this.$api.companies.delete(companies_selected);
         this.companies_selected = [];
-        await this.getCompanies();
+        this.getCompanies();
       } catch(err) {
         this.errors.push(err);
       }
@@ -295,7 +290,7 @@ export default {
     },
     async getClientCompanies(client) {
       try {
-        const response = await this.$api.post(paths.client_companies, client);
+        const response = await this.$api.companies.client_companies(client);
         this.client_companies = response.data;
         this.qDialogs.prevValue = this.client_companies;
       } catch(err) {
@@ -304,7 +299,7 @@ export default {
     },
     async getCompanyClients(company) {
       try {
-        const response = await this.$api.post(paths.company_clients, company);
+        const response = await this.$api.companies.clients(company);
         this.company_clients = response.data;
         this.qDialogs.prevValue = this.company_clients;
       } catch(err) {

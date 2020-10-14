@@ -1,7 +1,7 @@
 <template lang="pug">
   #staff
     q-layout(view="hHh lPr fff")
-      navbar(:user_email = "staff_email" :user_logout_path="staff_logout_path")
+      navbar(:user_email = "staff_email" :user_logout_path="$api.staff.logout")
       dashboard()
 </template>
 
@@ -9,7 +9,6 @@
 import navbar from "../shared/navbar";
 import dashboard from "./dashboard";
 import { QSpinnerGrid } from 'quasar';
-import paths from '../../api/paths';
 
 export default {
   components: {
@@ -18,13 +17,12 @@ export default {
   },
   data: function () {
     return {
-      staff_email: null,
-      staff_logout_path: paths.staff_logout
+      staff_email: null
     }
   },
   methods: {
     async staffEmail() {
-      const response = await this.$api.get(paths.staff_email);
+      const response = await this.$api.staff.email();
       this.staff_email = response.data.staff_email;
     },
     showLoading () {

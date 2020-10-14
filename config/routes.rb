@@ -10,7 +10,7 @@ Rails.application.routes.draw do
   get '/clients', to: 'clients#index'
   get '/clients/client_email', to: 'clients#client_email'
   get '/clients/client_logout', to: 'clients#client_logout'
-  get '/clients/companies', to: 'clients#companies'
+  get '/client/companies', to: 'clients#companies'
   get '/companies', to: 'companies#index'
   post '/clients/delete', to: 'clients#delete'
   post '/companies/delete', to: 'companies#delete'
@@ -20,7 +20,7 @@ Rails.application.routes.draw do
   patch '/clients/update', to: 'clients#update'
   patch '/clients_companies/rebind_companies_to_client', to: 'clients_companies#rebind_companies_to_client'
   patch '/companies/update', to: 'companies#update'
-  post '/companies/company_clients', to: 'companies#company_clients'
+  post '/companies/clients', to: 'companies#clients'
   patch '/clients_companies/rebind_clients_to_company', to: 'clients_companies#rebind_clients_to_company'
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
 end

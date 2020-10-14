@@ -1,7 +1,7 @@
 class CompaniesController < ApplicationController
-  before_action :authenticate_staff!, only: [:index, :delete, :create, :client_companies, :update, :company_clients]
+  before_action :authenticate_staff!, only: [:index, :delete, :create, :client_companies, :update, :clients]
   before_action :find_client, only: [:client_companies]
-  before_action :find_company, only: [:update, :company_clients]
+  before_action :find_company, only: [:update, :clients]
 
   def index
     render :json => Company.all.includes(:juristic_type).pluck_all(:id, :name, :juristic_type_id, '"juristic_types"."name" as jur_type', :inn, :ogrn)
@@ -24,7 +24,7 @@ class CompaniesController < ApplicationController
     @company.update(company_params)
   end
 
-  def company_clients
+  def clients
     render :json => @company.clients.pluck(:id)
   end
 
