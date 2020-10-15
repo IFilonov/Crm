@@ -1,0 +1,2 @@
+class JuristicType < ApplicationRecord
+end
