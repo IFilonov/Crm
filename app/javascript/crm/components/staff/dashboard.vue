@@ -15,7 +15,7 @@
                 q-form(class="q-gutter-md" @submit="sendClient(client)" @reset="reset(client)")
                   q-input(filled label="Your Fullname *" hint="Name and surname"
                     v-model="client.fullname"
-                    lazy-rules :rules="[ val => val.length > 5 || 'Please type Fullname > 5 chars']")
+                    lazy-rules :rules="[ val => val && val.length > 5 || 'Please type Fullname > 5 chars']")
                   q-input(filled type="email" label="Your email *" hint="your@email.adr"
                     v-model="client.email"
                     :rules="[ val => validEmail ]")
@@ -40,13 +40,13 @@
                 q-form(class="q-gutter-md" @submit="onEditClient")
                   q-input(filled label="Your Fullname *" hint="Name and surname"
                     v-model="client.fullname"
-                    lazy-rules :rules="[ val => val.length > 5 || 'Please type Fullname > 5 chars']")
+                    lazy-rules :rules="[ val => val && val.length > 5 || 'Please type Fullname > 5 chars']")
                   q-input(filled type="email" label="Your email *" hint="your@email.adr"
                     v-model="client.email"
                     :rules="[ val => validEmail ]")
                   q-input(filled type="number" mask="phone" label="Your phone *"
                     v-model="client.phone"
-                    lazy-rules :rules="[ val => val && val.length > 5 || 'Please type Phone > 5 only digits']")
+                    lazy-rules :rules="[ val => val && val.toString().length > 5 || 'Please type Phone > 5 only digits']")
                   q-select(
                     v-model="client_companies" label="Companies"
                     multiple counter use-chips
@@ -68,13 +68,13 @@
                 q-form(class="q-gutter-md" @submit="sendCompany(company)" @reset="reset(company)")
                   q-input(filled label="Company name *"
                     v-model="company.name"
-                    lazy-rules :rules="[ val => val.length > 2 || 'Please type name > 2 chars']")
+                    lazy-rules :rules="[ val => val && val.length > 2 || 'Please type name > 2 chars']")
                   q-input(filled type="number" label="INN" hint="Company inn"
                     v-model="company.inn"
-                    lazy-rules :rules="[ val => val.length > 10 || 'Please type INN > 10 only digits']")
+                    lazy-rules :rules="[ val => val && val.toString().length > 10 || 'Please type INN > 10 only digits']")
                   q-input(filled type="number" label="Company OGRN *"
                     v-model="company.ogrn"
-                    lazy-rules :rules="[ val => val && val.length > 10 || 'Please type OGRN > 10 only digits']")
+                    lazy-rules :rules="[ val => val && val.toString().length > 10 || 'Please type OGRN > 10 only digits']")
                   q-select(
                     v-model="company.juristic_type_id" label="Juristic type"
                     :options="juristic_types" option-value="id" option-label="name"
@@ -96,13 +96,13 @@
                 q-form(class="q-gutter-md" @submit="onEditCompany")
                   q-input(filled label="Company name *"
                     v-model="company.name"
-                    lazy-rules :rules="[ val => val.length > 2 || 'Please type name > 2 chars']")
+                    lazy-rules :rules="[ val => val && val.length > 2 || 'Please type name > 2 chars']")
                   q-input(filled type="number" label="INN" hint="Company inn"
                     v-model="company.inn"
-                    lazy-rules :rules="[ val => val && val.length > 10 || 'Please type INN > 10 only digits']")
+                    lazy-rules :rules="[ val => val && val.toString().length > 10 || 'Please type INN > 10 only digits']")
                   q-input(filled type="number" label="Company OGRN *"
                     v-model="company.ogrn"
-                    lazy-rules :rules="[ val => val && val.length > 10 || 'Please type OGRN > 10 only digits']")
+                    lazy-rules :rules="[ val => val && val.toString().length > 10 || 'Please type OGRN > 10 only digits']")
                   q-select(
                     v-model="company.juristic_type_id" label="Juristic type"
                     :options="juristic_types" option-value="id" option-label="name"
@@ -278,14 +278,14 @@ export default {
           `${this.clients_selected.length} record${this.clients_selected.length > 1 ? 's' : ''} selected of ${this.clients.length}`
     },
     onDblClickClientsTable(evt, row, index) {
-      this.client = row;
-      this.getClientCompanies(this.client);
+      this.client = Object.assign({},row);
+      this.getClientCompanies(row);
       this.qDialogs.prevValue = this.client_companies;
       this.qDialogs.client_edit = true;
     },
     onDblClickCompaniesTable(evt, row, index) {
-      this.company = row;
-      this.getCompanyClients(this.company);
+      this.company = Object.assign({},row);
+      this.getCompanyClients(row);
       this.qDialogs.company_edit = true;
     },
     async getClientCompanies(client) {
