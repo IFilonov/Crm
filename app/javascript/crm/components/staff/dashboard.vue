@@ -81,23 +81,10 @@
                     emit-value map-options
                     transition-show="flip-up" transition-hide="flip-down")
                   q-btn(label="Submit" type="submit" color="primary" glossy dense)
-                  q-btn(label="Load from Dadata" color="primary" @click="onDadata" glossy dense)
+                  q-btn(label="Load from Dadata" color="primary" @click="qDialogs.dadata_new = true" glossy dense)
                   q-btn(label="Reset" type="reset" color="primary" flat class="q-ml-sm")
                   q-btn(flat label="Cancel" color="primary" v-close-popup)
-          q-dialog(v-model="qDialogs.dadata" persistent)
-            q-card
-              q-card-section(class="row items-center")
-                q-form(class="q-gutter-md" @submit="onAddDadata" @reset="reset(dadata_company)")
-                  q-select(filled v-model="dadata_company" clearable use-input hide-selected fill-input
-                    input-debounce="0" label="Autoselect after filtering" :options="dadata_options"
-                    option-label="name"
-                    @filter="filterFnAutoselect"  @filter-abort="abortFilterFn" style="width: 300px")
-                  template(v-slot:no-option)
-                    q-item
-                      q-item-section(class="text-grey") No results
-                  q-btn(label="Add" type="submit" color="primary")
-                  q-btn(label="Reset" type="reset" color="primary" flat class="q-ml-sm")
-                  q-btn(flat label="Cancel" color="primary" v-close-popup)
+          dadata(:dadata_new.sync="qDialogs.dadata_new" v-on:dadata_company="onSetDadata")
           br
           q-table(dense row-key="name" selection="multiple"
             :data="companies"
@@ -140,17 +127,18 @@
 import ERRORS from "../../utils/errors";
 import VALIDATORS from "../../utils/validators";
 import functions from "../../utils/functions";
+import dadata from "./dadata";
 
 export default {
+  components: {
+    dadata: dadata,
+  },
   data() {
     return {
       clients: [],
       client_companies: [],
       company_clients: [],
       companies: [],
-      dadata_companies: [],
-      dadata_options: [],
-      dadata_call_in_process: false,
       juristic_types: [],
       errors: [],
       client: {
@@ -163,7 +151,6 @@ export default {
       },
       clients_selected: [],
       companies_selected: [],
-      dadata_company: '',
       company: {
         name: '',
         inn: '',
@@ -175,19 +162,15 @@ export default {
         client_new: false,
         company_new: false,
         company_edit: false,
-        dadata: false,
+        dadata_new: false,
         prevValue: []
       },
     }
   },
   methods: {
-    onDadata() {
-      this.qDialogs.dadata = true;
-      this.reset(this.dadata_companies);
-    },
-    onAddDadata() {
-      this.company = (Object.assign({},this.dadata_company));
-      this.qDialogs.dadata = false;
+    onSetDadata(value){
+      this.company = value;
+      this.qDialogs.dadata_new = false;
     },
     onEditClient(evt) {
       this.editClient(this.client);
@@ -284,29 +267,6 @@ export default {
         this.errors.push(err);
       }
     },
-    async getDadataCompanies(filter) {
-      try {
-        this.dadata_call_in_process = true;
-        this.dadata_companies = [];
-        let dadata_filter = {
-          query: filter
-        };
-        console.log("get_dadata");
-        const response = await this.$api.dadata.index(dadata_filter);
-        response.data.suggestions.forEach(element => {
-          this.company.name= element.data.name.full;
-          this.company.inn = element.data.inn;
-          this.company.ogrn = element.data.ogrn;
-          this.dadata_companies.push(Object.assign({},this.company));
-          this.reset(this.company);
-          }
-        )
-        this.dadata_options = (Object.assign([],this.dadata_companies));
-      } catch(err) {
-        this.errors.push(err);
-      };
-      this.dadata_call_in_process = false;
-    },
     async getJuristicTypes() {
       try {
         const response = await this.$api.juristic_types.index();
@@ -357,37 +317,6 @@ export default {
       } catch(err) {
         this.errors.push(err);
       }
-    },
-    filterFnAutoselect (val, update, abort) {
-      // call abort() at any time if you can't retrieve data somehow
-      if (val.length > 0 && !this.dadata_call_in_process) {
-        this.getDadataCompanies(val);
-      };
-      setTimeout(() => {
-        update(
-            () => {
-              if (val === '') {
-                this.dadata_options = (Object.assign([],this.dadata_companies));
-              }
-              else {
-                const needle = val.toLowerCase()
-                this.dadata_options = this.dadata_companies.filter(company => company.name.toLowerCase().indexOf(needle) > -1);
-              }
-            },
-
-            // next function is available in Quasar v1.7.4+;
-            // "ref" is the Vue reference to the QSelect
-            ref => {
-              if (val !== '' && ref.options.length > 0 && ref.optionIndex === -1) {
-                ref.moveOptionSelection(1, true) // focus the first selectable option and do not update the input-value
-                ref.toggleOption(ref.options[ref.optionIndex].name, true) // toggle the focused option
-              }
-            }
-        )
-      }, 500)
-    },
-
-    abortFilterFn () {
     }
   },
   computed: {
