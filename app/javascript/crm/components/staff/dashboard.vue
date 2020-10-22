@@ -54,14 +54,14 @@
                     emit-value map-options
                     transition-show="flip-up" transition-hide="flip-down")
                   div
-                    q-btn(label="Update" type="submit" color="primary")
+                    q-btn(label="Update" type="submit" color="primary" glossy dense)
                     q-btn(flat label="Cancel" color="primary" v-close-popup)
         q-card-section
           span Companies
           q-btn(label="Delete" type="Delete" color="primary" glossy dense style="margin:10px;"
             v-bind:disabled="isCompaniesDelBtnDisabled"
             @click="deleteCompanies")
-          q-btn(label="Create" color="primary" @click="qDialogs.company_new = true" glossy dense)
+          q-btn(label="Create" color="primary" @click="qDialogs.company_new = true" glossy dense style="margin:10px;")
           q-dialog(v-model="qDialogs.company_new" persistent)
             q-card
               q-card-section(class="row items-center")
@@ -71,22 +71,25 @@
                     lazy-rules :rules="[ val => val && val.length > 2 || 'Please type name > 2 chars']")
                   q-input(filled type="number" label="INN" hint="Company inn"
                     v-model="company.inn"
-                    lazy-rules :rules="[ val => val && val.toString().length > 10 || 'Please type INN > 10 only digits']")
+                    lazy-rules :rules="[ val => val && val.toString().length > 9 || 'Please type INN > 9 only digits']")
                   q-input(filled type="number" label="Company OGRN *"
                     v-model="company.ogrn"
-                    lazy-rules :rules="[ val => val && val.toString().length > 10 || 'Please type OGRN > 10 only digits']")
+                    lazy-rules :rules="[ val => val && val.toString().length > 9 || 'Please type OGRN > 9 only digits']")
                   q-select(
                     v-model="company.juristic_type_id" label="Juristic type"
                     :options="juristic_types" option-value="id" option-label="name"
                     emit-value map-options
                     transition-show="flip-up" transition-hide="flip-down")
-                  q-btn(label="Submit" type="submit" color="primary")
+                  q-btn(label="Submit" type="submit" color="primary" glossy dense)
+                  q-btn(label="Load from Dadata" color="primary" @click="qDialogs.dadata_new = true" glossy dense)
                   q-btn(label="Reset" type="reset" color="primary" flat class="q-ml-sm")
                   q-btn(flat label="Cancel" color="primary" v-close-popup)
+          dadata(:dadata_new.sync="qDialogs.dadata_new" v-on:dadata_company="onSetDadata")
           br
           q-table(dense row-key="name" selection="multiple"
             :data="companies"
             @row-dblclick="onDblClickCompaniesTable"
+            option-label="name"
             :pagination.sync="pagination"
             :selected.sync="companies_selected"
             :visible-columns=['name', 'inn', 'jur_type', 'ogrn'])
@@ -124,8 +127,12 @@
 import ERRORS from "../../utils/errors";
 import VALIDATORS from "../../utils/validators";
 import functions from "../../utils/functions";
+import dadata from "./dadata";
 
 export default {
+  components: {
+    dadata: dadata,
+  },
   data() {
     return {
       clients: [],
@@ -155,11 +162,16 @@ export default {
         client_new: false,
         company_new: false,
         company_edit: false,
+        dadata_new: false,
         prevValue: []
-      }
+      },
     }
   },
   methods: {
+    onSetDadata(value){
+      this.company = value;
+      this.qDialogs.dadata_new = false;
+    },
     onEditClient(evt) {
       this.editClient(this.client);
       this.rebindCompaniesToClient();

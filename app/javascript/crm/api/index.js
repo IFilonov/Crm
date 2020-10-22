@@ -3,6 +3,7 @@ import axios from 'axios'
 
 const token = document.head.querySelector('meta[name="csrf-token"]')
 axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content
+const  DADATA_API_KEY = "e3c2ca1dd9c7c0c37b95a7b040f2116b17e5c418"
 
 const api = {
     clients: {
@@ -34,6 +35,16 @@ const api = {
     client_companies: {
         rebind_companies: (companies) => axios.patch("/clients_companies/rebind_companies_to_client", companies),
         rebind_clients: (clients) => axios.patch( "/clients_companies/rebind_clients_to_company", clients)
+    },
+    dadata: {
+        index: (query) => axios.post( "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/party", query,
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json",
+                    "Authorization": "Token " + DADATA_API_KEY
+                }
+            })
     }
 }
 
