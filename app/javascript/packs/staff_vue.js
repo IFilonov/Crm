@@ -9,9 +9,11 @@ import Vue from 'vue'
 import App from '../crm/components/staff/staff.vue'
 import '../crm/api'
 import '../crm/quasar'
+import router from '../crm/router'
 
 document.addEventListener('DOMContentLoaded', () => {
   const app = new Vue({
+    router: router,
     render: h => h(App)
   }).$mount()
   document.body.appendChild(app.$el)
