@@ -5,7 +5,7 @@
         q-card-section(class="row items-center")
           q-form(class="q-gutter-md" @submit="onAddDadata" @reset="reset")
             q-select(filled v-model="dadata_company" clearable use-input hide-selected fill-input
-            input-debounce="0" label="Autoselect after filtering" :options="dadata_options"
+            input-debounce="300" label="Autoselect after filtering" :options="dadata_options"
               option-label="name"
               @filter="filterFnAutoselect"  @filter-abort="abortFilterFn" style="width: 300px")
             template(v-slot:no-option)
@@ -51,40 +51,30 @@ export default {
           company.ogrn = element.data.ogrn;
           this.dadata_companies.push(Object.assign({},company));
           }
-      )
-        this.dadata_options = (Object.assign([],this.dadata_companies));
+        )
+        this.dadata_options = this.dadata_companies.filter(company => company.name.toLowerCase().indexOf(filter.toLowerCase()) > -1);
       } catch(err) {
         this.errors.push(err);
       };
     },
     filterFnAutoselect (val, update, abort) {
       // call abort() at any time if you can't retrieve data somehow
-      if (val.length > 0) {
-        this.getDadataCompanies(val);
-      };
-      setTimeout(() => {
-        update(
-            () => {
-              if (val === '') {
-                this.dadata_options = (Object.assign([],this.dadata_companies));
-              }
-              else {
-                const needle = val.toLowerCase()
-                this.dadata_options = this.dadata_companies.filter(company => company.name.toLowerCase().indexOf(needle) > -1);
-              }
-            },
-
-            // next function is available in Quasar v1.7.4+;
-            // "ref" is the Vue reference to the QSelect
-            ref => {
-              if (val !== '' && ref.options.length > 0 && ref.optionIndex === -1) {
-                ref.moveOptionSelection(1, true) // focus the first selectable option and do not update the input-value
-                ref.toggleOption(ref.options[ref.optionIndex].name, true) // toggle the focused option
-              }
-            }
-        )
-      }, 500)
-    },
+      update(
+        () => {
+          if (val.length > 0) {
+            this.getDadataCompanies(val);
+          } else {
+            this.dadata_options = (Object.assign([], this.dadata_companies));
+          }
+        },
+        ref => {
+          if (val !== '' && ref.options.length > 0 && ref.optionIndex === -1) {
+            ref.moveOptionSelection(1, true) // focus the first selectable option and do not update the input-value
+            ref.toggleOption(ref.options[ref.optionIndex].name, true) // toggle the focused option
+          }
+        }
+      )
+   },
 
     abortFilterFn () {
     }
