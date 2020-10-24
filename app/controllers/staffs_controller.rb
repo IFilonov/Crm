@@ -2,6 +2,9 @@ class StaffsController < ApplicationController
 
   before_action :authenticate_staff!
 
+  def index
+  end
+
   def staff_email
     render :json => {:staff_email => current_staff.email }
   end

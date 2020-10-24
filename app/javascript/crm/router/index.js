@@ -3,12 +3,15 @@ import VueRouter from 'vue-router'
 
 Vue.use(VueRouter)
 
-import dashboard from "../components/staff/dashboard";
+import Clients from "../components/staff/clients";
+import Companies from "../components/staff/companies";
 
 export default new VueRouter( {
   mode: 'history',
-  routers: [
-    { path: '/', component: dashboard}
+  hashbang: false,
+  routes: [
+    { path: '/', redirect: '/staffs/clients'},
+    { path: '/staffs/clients', component: Clients, name: 'Clients'},
+    { path: '/staffs/companies', component: Companies, name: 'Companies'}
   ]
-
 })

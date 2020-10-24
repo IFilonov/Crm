@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Crm</title>
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+</head>
+
+<body>
+  <%= render 'shared/flash' %>
+  <%= yield %>
+  <%= javascript_pack_tag 'client_vue' %>
+</body>
+</html>
