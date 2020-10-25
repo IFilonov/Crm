@@ -1,6 +1,6 @@
 <template lang="pug">
-  span Clients
-    q-btn(label="Delete" type="Delete" color="primary" glossy dense style="margin:10px;"
+  div
+    q-btn(label="Delete" type="Delete" color="primary" glossy dense style="margin:5px;"
       v-bind:disabled="isClientsDelBtnDisabled"
       @click="deleteClients")
     q-btn(label="Create" color="primary" @click="qDialogs.client_new = true" glossy dense)
@@ -29,28 +29,7 @@
       :selected-rows-label="getSelectedString"
       :selected.sync="clients_selected"
       :visible-columns=['fullname', 'email', 'phone'])
-    q-dialog(v-model="qDialogs.client_edit" persistent)
-      q-card
-        q-card-section(class="row items-center")
-          q-form(class="q-gutter-md" @submit="onEditClient")
-            q-input(filled label="Your Fullname *" hint="Name and surname"
-              v-model="client.fullname"
-              lazy-rules :rules="[ val => val && val.length > 5 || 'Please type Fullname > 5 chars']")
-            q-input(filled type="email" label="Your email *" hint="your@email.adr"
-              v-model="client.email"
-              :rules="[ val => validEmail ]")
-            q-input(filled type="number" mask="phone" label="Your phone *"
-              v-model="client.phone"
-              lazy-rules :rules="[ val => val && val.toString().length > 5 || 'Please type Phone > 5 only digits']")
-            q-select(
-              v-model="client_companies" label="Companies"
-              multiple counter use-chips
-              :options="companies" option-value="id" option-label="name"
-              emit-value map-options
-              transition-show="flip-up" transition-hide="flip-down")
-            div
-              q-btn(label="Update" type="submit" color="primary" glossy dense)
-              q-btn(flat label="Cancel" color="primary" v-close-popup)
+    router-view
 </template>
 
 <script>
@@ -62,9 +41,6 @@ export default {
   data() {
     return {
       clients: [],
-      client_companies: [],
-      companies: [],
-      juristic_types: [],
       errors: [],
       client: {
         fullname: '',
@@ -76,18 +52,11 @@ export default {
       },
       clients_selected: [],
       qDialogs: {
-        client_edit: false,
-        client_new: false,
-        prevValue: []
+        client_new: false
       },
     }
   },
   methods: {
-    onEditClient(evt) {
-      this.editClient(this.client);
-      this.rebindCompaniesToClient();
-      this.qDialogs.client_edit = false;
-    },
     reset(entity) {
       functions.resetEntity(entity);
     },
@@ -97,24 +66,6 @@ export default {
         const response = await this.$api.clients.create(client);
         this.reset(this.client);
         await this.getClients();
-      } catch(err)  {
-        this.errors.push(err);
-      }
-    },
-    async editClient(client) {
-      try {
-        const response = await this.$api.clients.update(client);
-        await this.getClients();
-      } catch(err)  {
-        this.errors.push(err);
-      }
-    },
-    async rebindCompaniesToClient() {
-      try {
-        let new_company_ids = functions.arrDiffs(this.client_companies, this.qDialogs.prevValue);
-        let del_company_ids = functions.arrDiffs(this.qDialogs.prevValue, this.client_companies);
-        let companies = { client_id: this.client["id"], new_company_ids: new_company_ids, del_company_ids: del_company_ids }
-        const response = await this.$api.client_companies.rebind_companies(companies);
       } catch(err)  {
         this.errors.push(err);
       }
@@ -132,23 +83,7 @@ export default {
         let clients_selected = { ids:  this.clients_selected.map(client => client.id ) };
         const response = await this.$api.clients.delete(clients_selected);
         this.clients_selected = [];
-        this.getClients();
-      } catch(err) {
-        this.errors.push(err);
-      }
-    },
-    async getCompanies() {
-      try {
-        const response = await this.$api.companies.index();
-        this.companies = response.data;
-      } catch(err) {
-        this.errors.push(err);
-      }
-    },
-    async getJuristicTypes() {
-      try {
-        const response = await this.$api.juristic_types.index();
-        this.juristic_types = response.data;
+        await this.getClients();
       } catch(err) {
         this.errors.push(err);
       }
@@ -158,20 +93,9 @@ export default {
           `${this.clients_selected.length} record${this.clients_selected.length > 1 ? 's' : ''} selected of ${this.clients.length}`
     },
     onDblClickClientsTable(evt, row, index) {
-      this.client = Object.assign({},row);
-      this.getClientCompanies(row);
-      this.qDialogs.prevValue = this.client_companies;
-      this.qDialogs.client_edit = true;
+      let id = row.id;
+      this.$router.push({ name: 'Client_edit', params: { id } });
     },
-    async getClientCompanies(client) {
-      try {
-        const response = await this.$api.companies.client_companies(client);
-        this.client_companies = response.data;
-        this.qDialogs.prevValue = this.client_companies;
-      } catch(err) {
-        this.errors.push(err);
-      }
-    }
   },
   computed: {
     validEmail() {
@@ -183,7 +107,6 @@ export default {
   },
   mounted() {
     this.getClients();
-    this.getCompanies();
   }
 }
 </script>

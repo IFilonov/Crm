@@ -11,6 +11,7 @@ Rails.application.routes.draw do
     post '/clients/create', to: 'clients#create'
     get '/clients', to: 'clients#index'
     get '/clients/client_email', to: 'clients#client_email'
+    post '/clients/id', to: 'clients#client'
     get '/client/companies', to: 'clients#companies'
     get '/companies', to: 'companies#index'
     post '/clients/delete', to: 'clients#delete'

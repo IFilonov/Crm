@@ -3,8 +3,8 @@
     q-drawer(show-if-above bordered)
     q-page-container
       q-card
-        q-btn(color="primary" label="Clients" :to="{ name: 'Clients' }")
-        q-btn(color="secondary" label="Companies" :to="{ name: 'Companies' }")
+        q-btn(color="primary" label="Clients" :to="{ name: 'Clients' }" style="margin:5px;")
+        q-btn(color="secondary" label="Companies" :to="{ name: 'Companies' }" style="margin:5px;")
         q-card-section
           router-view
 </template>
