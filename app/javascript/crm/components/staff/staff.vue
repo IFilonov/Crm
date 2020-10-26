@@ -2,7 +2,7 @@
   #staff
     q-layout(view="hHh lPr fff")
       navbar(:user_email = "staff_email" :user_logout_path="$api.staff.logout")
-      dashboard()
+      dashboard
 </template>
 
 <script>

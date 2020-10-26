@@ -19,8 +19,10 @@
             emit-value map-options
             transition-show="flip-up" transition-hide="flip-down")
           div
-            q-btn(label="Update" type="submit" color="primary" glossy dense)
-            q-btn(flat label="Cancel" color="primary" v-close-popup)
+            q-btn(label="Reset password" color="primary" @click="onResetPassword" glossy dense style="margin:5px;")
+          div
+            q-btn(label="Update" type="submit" color="primary" glossy dense  style="margin:5px;")
+            q-btn(flat label="Cancel" color="primary" v-close-popup style="margin:5px;")
 </template>
 
 <script>
@@ -49,8 +51,7 @@ export default {
     },
     async getClientById() {
       try {
-        let id = { id: this.id };
-        const response = await this.$api.clients.get(id);
+        const response = await this.$api.clients.get({ id: this.id });
         this.client = response.data;
         await this.getClientCompanies();
       } catch(err) {
@@ -62,6 +63,9 @@ export default {
       this.editClient();
       this.rebindCompaniesToClient();
     },
+    onResetPassword(){
+      this.resetPassword();
+    },
     reset(entity) {
       functions.resetEntity(entity);
     },
@@ -71,6 +75,13 @@ export default {
         this.client_companies = response.data;
         this.old_client_companies = this.client_companies;
       } catch(err) {
+        this.errors.push(err);
+      }
+    },
+    async resetPassword() {
+      try {
+        const response = await this.$api.clients.reset({ id: this.id });
+      } catch(err)  {
         this.errors.push(err);
       }
     },
@@ -121,7 +132,6 @@ export default {
     this.getClientById();
     this.getCompanies();
     this.clnt_edit=true;
-    console.log(this.clnt_edit);
   }
 }
 </script>

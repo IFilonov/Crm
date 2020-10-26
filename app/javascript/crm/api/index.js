@@ -17,6 +17,7 @@ const api = {
         email: () => adapter.get("/clients/client_email"),
         create: (client) => adapter.post("/clients/create", client),
         update: (client) => adapter.patch("/clients/update", client),
+        reset: (id) => adapter.patch("/clients/reset", id),
         delete: (clients) => adapter.post("/clients/delete", clients),
         get: (id) => adapter.post("/clients/id", id)
     },

@@ -1,7 +1,7 @@
 class ClientsController < ApplicationController
-  before_action :authenticate_staff!, only: [:create, :index, :delete, :update, :client]
+  before_action :authenticate_staff!, only: [:create, :index, :delete, :update, :client, :reset]
   before_action :authenticate_client!, only: [:client_email, :client_logout, :companies]
-  before_action :find_client, only: [:update, :client]
+  before_action :find_client, only: [:update, :client, :reset]
   
   def index
     render :json => Client.all.pluck_all(:id, :fullname, :email, :phone)
@@ -39,6 +39,12 @@ class ClientsController < ApplicationController
 
   def client
     render :json => @client
+  end
+
+  def reset
+    new_password = Devise.friendly_token(50)
+    @client.reset_password(new_password, new_password)
+    @client.send_reset_password_instructions
   end
 
   private

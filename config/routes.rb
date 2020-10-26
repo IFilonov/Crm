@@ -20,6 +20,7 @@ Rails.application.routes.draw do
     get '/juristic_types', to: 'juristic_types#index'
     post '/companies/client_companies', to: 'companies#client_companies'
     patch '/clients/update', to: 'clients#update'
+    patch '/clients/reset', to: 'clients#reset'
     patch '/clients_companies/rebind_companies_to_client', to: 'clients_companies#rebind_companies_to_client'
     patch '/companies/update', to: 'companies#update'
     post '/companies/clients', to: 'companies#clients'
