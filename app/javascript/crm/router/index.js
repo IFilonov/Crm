@@ -5,6 +5,7 @@ Vue.use(VueRouter)
 
 import Clients from "../components/staff/clients";
 import Companies from "../components/staff/companies";
+import Devices from "../components/staff/devices";
 import Client_edit from "../components/staff/client_edit";
 
 export default new VueRouter( {
@@ -18,6 +19,7 @@ export default new VueRouter( {
         { path: ':id', component: Client_edit, name: 'Client_edit' }
       ]
     },
-    { path: '/staffs/companies', component: Companies, name: 'Companies'}
+    { path: '/staffs/companies', component: Companies, name: 'Companies' },
+    { path: '/staffs/devices', component: Devices, name: 'Devices' }
   ]
 })

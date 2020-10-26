@@ -53,6 +53,13 @@ const api = {
                     "Authorization": "Token " + DADATA_API_KEY
                 }
             })
+    },
+    devices: {
+        index: () => adapter.get("/devices"),
+        create: (client) => adapter.post("/devices/create", client),
+        update: (client) => adapter.patch("/devices/update", client),
+        delete: (clients) => adapter.post("/devices/delete", clients),
+        get: (id) => adapter.post("/devices/id", id)
     }
 }
 

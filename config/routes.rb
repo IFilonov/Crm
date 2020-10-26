@@ -25,6 +25,11 @@ Rails.application.routes.draw do
     patch '/companies/update', to: 'companies#update'
     post '/companies/clients', to: 'companies#clients'
     patch '/clients_companies/rebind_clients_to_company', to: 'clients_companies#rebind_clients_to_company'
+    post '/devices/create', to: 'devices#create'
+    get '/devices', to: 'devices#index'
+    post '/devices/id', to: 'devices#device'
+    post '/devices/delete', to: 'devices#delete'
+    patch '/devices/update', to: 'devices#update'
   end
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
   #
