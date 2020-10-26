@@ -30,6 +30,7 @@ Rails.application.routes.draw do
     post '/devices/id', to: 'devices#device'
     post '/devices/delete', to: 'devices#delete'
     patch '/devices/update', to: 'devices#update'
+    post '/devices/id', to: 'devices#device'
   end
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
   #

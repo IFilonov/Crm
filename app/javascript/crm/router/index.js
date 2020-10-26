@@ -7,6 +7,7 @@ import Clients from "../components/staff/clients";
 import Companies from "../components/staff/companies";
 import Devices from "../components/staff/devices";
 import Client_edit from "../components/staff/client_edit";
+import Device_edit from "../components/staff/device_edit";
 
 export default new VueRouter( {
   mode: 'history',
@@ -20,6 +21,10 @@ export default new VueRouter( {
       ]
     },
     { path: '/staffs/companies', component: Companies, name: 'Companies' },
-    { path: '/staffs/devices', component: Devices, name: 'Devices' }
+    { path: '/staffs/devices', component: Devices, name: 'Devices',
+      children: [
+        { path: ':id', component: Device_edit, name: 'Device_edit' }
+      ]
+    }
   ]
 })
