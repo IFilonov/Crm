@@ -29,20 +29,15 @@
 import functions from "../../utils/functions";
 import VALIDATORS from "../../utils/validators";
 import ERRORS from "../../utils/errors";
+import entityLoads from "../../mixins/entity_loads";
 
 export default {
+  mixins: [entityLoads],
   data() {
     return {
       clnt_edit: false,
       client_companies: [],
       old_client_companies: [],
-      companies: [],
-      client: {
-        fullname: '',
-        email: '',
-        phone: ''
-      },
-      errors: [],
     }
   },
   methods: {
@@ -100,22 +95,6 @@ export default {
         let companies = { client_id: this.client["id"], new_company_ids: new_company_ids, del_company_ids: del_company_ids }
         const response = await this.$api.client_companies.rebind_companies(companies);
       } catch(err)  {
-        this.errors.push(err);
-      }
-    },
-    async getClients() {
-      try {
-        const response = await this.$api.clients.index();
-        this.clients = response.data;
-      } catch(err) {
-        this.errors.push(err);
-      }
-    },
-    async getCompanies() {
-      try {
-        const response = await this.$api.companies.index();
-        this.companies = response.data;
-      } catch(err) {
         this.errors.push(err);
       }
     }

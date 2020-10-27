@@ -39,19 +39,12 @@
 
 <script>
 import functions from "../../utils/functions";
+import entityLoads from "../../mixins/entity_loads";
 
 export default {
+  mixins: [entityLoads],
   data() {
     return {
-      companies: [],
-      devices: [],
-      errors: [],
-      device: {
-        name: '',
-        type: '',
-        serial: '',
-        company_id: ''
-      },
       pagination: {
         rowsPerPage: 20 // current rows per page being displayed
       },
@@ -75,14 +68,6 @@ export default {
         this.errors.push(err);
       }
     },
-    async getDevices() {
-      try {
-        const response = await this.$api.devices.index();
-        this.devices = response.data;
-      } catch(err) {
-        this.errors.push(err);
-      }
-    },
     async deleteDevices() {
       try {
         let devices_selected = { ids:  this.devices_selected.map(device => device.id) };
@@ -100,14 +85,6 @@ export default {
     onDblClickDevicesTable(evt, row, index) {
       let id = row.id;
       this.$router.push({ name: 'Device_edit', params: { id } });
-    },
-    async getCompanies() {
-      try {
-        const response = await this.$api.companies.index();
-        this.companies = response.data;
-      } catch(err) {
-        this.errors.push(err);
-      }
     }
   },
   computed: {

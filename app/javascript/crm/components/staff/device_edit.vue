@@ -26,19 +26,13 @@
 import functions from "../../utils/functions";
 import VALIDATORS from "../../utils/validators";
 import ERRORS from "../../utils/errors";
+import entityLoads from "../../mixins/entity_loads";
 
 export default {
+  mixins: [entityLoads],
   data() {
     return {
       device_edit: false,
-      companies: [],
-      device: {
-        name: '',
-        type: '',
-        serial: '',
-        company_id: ''
-      },
-      errors: [],
     }
   },
   methods: {
@@ -64,14 +58,6 @@ export default {
       try {
         const response = await this.$api.devices.update(this.device);
       } catch(err)  {
-        this.errors.push(err);
-      }
-    },
-    async getCompanies() {
-      try {
-        const response = await this.$api.companies.index();
-        this.companies = response.data;
-      } catch(err) {
         this.errors.push(err);
       }
     }

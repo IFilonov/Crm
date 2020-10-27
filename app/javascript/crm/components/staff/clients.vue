@@ -36,17 +36,12 @@
 import functions from "../../utils/functions";
 import VALIDATORS from "../../utils/validators";
 import ERRORS from "../../utils/errors";
+import entityLoads from "../../mixins/entity_loads";
 
 export default {
+  mixins: [entityLoads],
   data() {
     return {
-      clients: [],
-      errors: [],
-      client: {
-        fullname: '',
-        email: '',
-        phone: ''
-      },
       pagination: {
         rowsPerPage: 20 // current rows per page being displayed
       },
@@ -67,14 +62,6 @@ export default {
         this.reset(this.client);
         await this.getClients();
       } catch(err)  {
-        this.errors.push(err);
-      }
-    },
-    async getClients() {
-      try {
-        const response = await this.$api.clients.index();
-        this.clients = response.data;
-      } catch(err) {
         this.errors.push(err);
       }
     },

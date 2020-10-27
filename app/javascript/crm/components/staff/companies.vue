@@ -76,34 +76,25 @@
 <script>
 import functions from "../../utils/functions";
 import dadata from "./dadata";
+import entityLoads from "../../mixins/entity_loads";
 
 export default {
+  mixins: [entityLoads],
   components: {
     dadata: dadata,
   },
   data() {
     return {
-      clients: [],
-      devices: [],
       client_companies: [],
       company_clients: [],
       old_company_clients: [],
       company_devices: [],
       old_company_devices: [],
-      companies: [],
       juristic_types: [],
-      errors: [],
       pagination: {
         rowsPerPage: 20 // current rows per page being displayed
       },
       companies_selected: [],
-      company: {
-        id: '',
-        name: '',
-        inn: '',
-        juristic_type_id: '',
-        ogrn: ''
-      },
       qDialogs: {
         client_edit: false,
         client_new: false,
@@ -157,30 +148,6 @@ export default {
         this.errors.push(err);
       }
     },
-    async getClients() {
-      try {
-        const response = await this.$api.clients.index();
-        this.clients = response.data;
-      } catch(err) {
-        this.errors.push(err);
-      }
-    },
-    async getCompanies() {
-      try {
-        const response = await this.$api.companies.index();
-        this.companies = response.data;
-      } catch(err) {
-        this.errors.push(err);
-      }
-    },
-    async getDevices() {
-      try {
-        const response = await this.$api.devices.index();
-        this.devices = response.data;
-      } catch(err) {
-        this.errors.push(err);
-      }
-    },
     async getJuristicTypes() {
       try {
         const response = await this.$api.juristic_types.index();
@@ -194,7 +161,7 @@ export default {
         let companies_selected = { ids:  this.companies_selected.map(company => company.id ) } ;
         const response = await this.$api.companies.delete(companies_selected);
         this.companies_selected = [];
-        this.getCompanies();
+        await this.getCompanies();
       } catch(err) {
         this.errors.push(err);
       }
