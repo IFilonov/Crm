@@ -35,14 +35,15 @@ const api = {
         update: (company) => adapter.patch("/companies/update", company),
         delete: (companies) => adapter.post("/companies/delete", companies),
         client_companies: (client) => adapter.post( "/companies/client_companies", client),
-        clients: (company) => adapter.post("/companies/clients", company)
+        clients: (company) => adapter.post("/companies/clients", company),
+        devices: (company) => adapter.post("/companies/devices", company),
+        rebind_refs_data: (data) => adapter.patch( "/companies/rebind_refs_data", data)
     },
     juristic_types: {
         index: () => adapter.get( "/juristic_types")
     },
     client_companies: {
-        rebind_companies: (companies) => adapter.patch("/clients_companies/rebind_companies_to_client", companies),
-        rebind_clients: (clients) => adapter.patch( "/clients_companies/rebind_clients_to_company", clients)
+        rebind_companies: (companies) => adapter.patch("/clients_companies/rebind_companies_to_client", companies)
     },
     dadata: {
         index: (query) => adapter.post( "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/party", query,

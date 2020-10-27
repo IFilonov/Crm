@@ -24,13 +24,14 @@ Rails.application.routes.draw do
     patch '/clients_companies/rebind_companies_to_client', to: 'clients_companies#rebind_companies_to_client'
     patch '/companies/update', to: 'companies#update'
     post '/companies/clients', to: 'companies#clients'
-    patch '/clients_companies/rebind_clients_to_company', to: 'clients_companies#rebind_clients_to_company'
+    patch '/companies/rebind_refs_data', to: 'companies#rebind_refs_data'
     post '/devices/create', to: 'devices#create'
     get '/devices', to: 'devices#index'
     post '/devices/id', to: 'devices#device'
     post '/devices/delete', to: 'devices#delete'
     patch '/devices/update', to: 'devices#update'
     post '/devices/id', to: 'devices#device'
+    post '/companies/devices', to: 'companies#devices'
   end
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
   #
