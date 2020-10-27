@@ -1,7 +1,6 @@
 class ClientsCompaniesController < ApplicationController
   before_action :authenticate_staff!, only: [:rebind_companies_to_client]
   before_action :find_client, only: [:rebind_companies_to_client]
-  #before_action :find_company, only: [:rebind_clients_to_company]
 
   def rebind_companies_to_client
     new_companies_params.each do |company|
