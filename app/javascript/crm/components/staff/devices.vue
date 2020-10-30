@@ -3,8 +3,8 @@
     q-btn(label="Delete" type="Delete" color="primary" glossy dense style="margin:5px;"
       v-bind:disabled="isDevicesDelBtnDisabled"
       @click="deleteDevices")
-    q-btn(label="Create" color="primary" @click="qDialogs.device_new = true" glossy dense)
-    q-dialog(v-model="qDialogs.device_new" persistent)
+    q-btn(label="Create" color="primary" @click="dlg = true" glossy dense)
+    q-dialog(v-model="dlg" persistent)
       q-card
         q-card-section(class="row items-center")
           q-form(class="q-gutter-md" @submit="sendDevice(device)" @reset="reset(device)")
@@ -27,12 +27,12 @@
               q-btn(label="Reset" type="reset" color="primary" flat class="q-ml-sm")
               q-btn(flat label="Cancel" color="primary" v-close-popup)
     br
-    q-table(dense row-key="email" selection="multiple"
+    q-table(dense row-key="serial" selection="multiple"
       @row-dblclick="onDblClickDevicesTable"
       :data="devices"
       :pagination.sync="pagination"
       :selected-rows-label="getSelectedString"
-      :selected.sync="devices_selected"
+      :selected.sync="selected"
       :visible-columns=['name', 'type', 'serial'])
     router-view
 </template>
@@ -40,18 +40,16 @@
 <script>
 import functions from "../../utils/functions";
 import entityLoads from "../../mixins/entity_loads";
+import notifications from "../../mixins/notifications";
 
 export default {
-  mixins: [entityLoads],
+  mixins: [entityLoads,notifications],
   data() {
     return {
       pagination: {
-        rowsPerPage: 20 // current rows per page being displayed
+        rowsPerPage: 5 // current rows per page being displayed
       },
-      devices_selected: [],
-      qDialogs: {
-        device_new: false
-      },
+      dlg: false
     }
   },
   methods: {
@@ -60,9 +58,10 @@ export default {
     },
     async sendDevice(device) {
       try {
-        this.qDialogs.device_new = false;
+        this.dlg = false;
         const response = await this.$api.devices.create(device);
         this.reset(this.device);
+        this.showNotif("Device created");
         await this.getDevices();
       } catch(err)  {
         this.errors.push(err);
@@ -70,31 +69,39 @@ export default {
     },
     async deleteDevices() {
       try {
-        let devices_selected = { ids:  this.devices_selected.map(device => device.id) };
+        let devices_selected = { ids:  this.selected.map(device => device.id) };
         const response = await this.$api.devices.delete(devices_selected);
-        this.devices_selected = [];
+        this.selected = [];
+        this.showNotif("Device(s) deleted");
         await this.getClients();
       } catch(err) {
         this.errors.push(err);
       }
     },
-    getSelectedString () {
-      return this.devices_selected.length === 0 ? '' :
-          `${this.devices_selected.length} record${this.devices_selected.length > 1 ? 's' : ''} selected of ${this.devices_selected.length}`
-    },
     onDblClickDevicesTable(evt, row, index) {
       let id = row.id;
       this.$router.push({ name: 'Device_edit', params: { id } });
+    },
+    getSelectedString () {
+      return this.selected.length === 0 ? '' :
+          `${this.selected.length} record${this.selected.length > 1 ? 's' : ''} selected of ${this.selected.length}`
     }
   },
   computed: {
     isDevicesDelBtnDisabled() {
-      return this.devices_selected.length === 0;
+      return this.selected.length === 0;
     }
   },
   mounted() {
     this.getDevices();
     this.getCompanies();
+  },
+  watch:{
+    $route (to, from){
+      if (this.$route.name === 'Devices') {
+        this.getDevices();
+      }
+    }
   }
 }
 </script>

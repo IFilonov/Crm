@@ -33,7 +33,7 @@
       @row-dblclick="onDblClickCompaniesTable"
       option-label="name"
       :pagination.sync="pagination"
-      :selected.sync="companies_selected"
+      :selected.sync="selected"
       :selected-rows-label="getSelectedString"
       :visible-columns=['name', 'inn', 'jur_type', 'ogrn'])
     q-dialog(v-model="qDialogs.company_edit" persistent)
@@ -77,9 +77,10 @@
 import functions from "../../utils/functions";
 import dadata from "./dadata";
 import entityLoads from "../../mixins/entity_loads";
+import notifications from "../../mixins/notifications";
 
 export default {
-  mixins: [entityLoads],
+  mixins: [entityLoads, notifications],
   components: {
     dadata: dadata,
   },
@@ -94,7 +95,6 @@ export default {
       pagination: {
         rowsPerPage: 20 // current rows per page being displayed
       },
-      companies_selected: [],
       qDialogs: {
         client_edit: false,
         client_new: false,
@@ -120,6 +120,7 @@ export default {
     async editCompany() {
       try {
         const response = await this.$api.companies.update(this.company);
+        this.showNotif("Company updated");
         await this.getCompanies();
       } catch(err)  {
         this.errors.push(err);
@@ -143,6 +144,7 @@ export default {
         this.qDialogs.company_new = false;
         const response = await this.$api.companies.create(company);
         this.reset(this.company);
+        this.showNotif("Company created");
         await this.getCompanies();
       } catch(err)  {
         this.errors.push(err);
@@ -158,17 +160,18 @@ export default {
     },
     async deleteCompanies() {
       try {
-        let companies_selected = { ids:  this.companies_selected.map(company => company.id ) } ;
+        let companies_selected = { ids:  this.selected.map(company => company.id ) } ;
         const response = await this.$api.companies.delete(companies_selected);
-        this.companies_selected = [];
+        this.selected = [];
+        this.showNotif("Company(ies) deleted");
         await this.getCompanies();
       } catch(err) {
         this.errors.push(err);
       }
     },
     getSelectedString () {
-      return this.companies_selected.length === 0 ? '' :
-          `${this.companies_selected.length} record${this.companies_selected.length > 1 ? 's' : ''} selected of ${this.companies.length}`
+      return this.selected.length === 0 ? '' :
+          `${this.selected.length} record${this.selected.length > 1 ? 's' : ''} selected of ${this.companies.length}`
     },
     onDblClickCompaniesTable(evt, row, index) {
       this.company = Object.assign({},row);
@@ -197,7 +200,7 @@ export default {
   },
   computed: {
     isCompaniesDelBtnDisabled() {
-      return this.companies_selected.length === 0;
+      return this.selected.length === 0;
     }
   },
   mounted() {

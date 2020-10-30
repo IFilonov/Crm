@@ -1,8 +1,8 @@
 <template lang="pug">
-  q-dialog(v-model="device_edit" persistent @hide="onHide")
+  q-dialog(v-model="dlg" persistent @hide="onHide")
     q-card
       q-card-section(class="row items-center")
-        q-form(class="q-gutter-md" @submit="onEditDevice")
+        q-form(class="q-gutter-md" @submit="onUpdate")
           q-input(filled label="Device name"
             v-model="device.name"
             lazy-rules :rules="[ val => val && val.length > 0 || 'Please type device name']")
@@ -24,15 +24,14 @@
 
 <script>
 import functions from "../../utils/functions";
-import VALIDATORS from "../../utils/validators";
-import ERRORS from "../../utils/errors";
 import entityLoads from "../../mixins/entity_loads";
+import notifications from "../../mixins/notifications";
 
 export default {
-  mixins: [entityLoads],
+  mixins: [entityLoads, notifications],
   data() {
     return {
-      device_edit: false,
+      dlg: false
     }
   },
   methods: {
@@ -47,18 +46,19 @@ export default {
         this.errors.push(err);
       }
     },
-    onEditDevice(evt) {
-      this.device_edit = false;
-      this.editDevice();
+    onUpdate(evt) {
+      this.dlg = false;
+      this.edit();
     },
     reset(entity) {
       functions.resetEntity(entity);
     },
-    async editDevice() {
+    async edit() {
       try {
         const response = await this.$api.devices.update(this.device);
+        this.showNotif("Device updated");
       } catch(err)  {
-        this.errors.push(err);
+        this.showErrNotif( { message: "Device not updated " , error: err } );
       }
     }
   },
@@ -70,7 +70,7 @@ export default {
   created() {
     this.getDeviceById();
     this.getCompanies();
-    this.device_edit=true;
+    this.dlg = true;
   }
 }
 </script>

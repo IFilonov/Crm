@@ -1,8 +1,8 @@
 <template lang="pug">
-  q-dialog(v-model="clnt_edit" persistent @hide="onHide")
+  q-dialog(v-model="dlg" persistent @hide="onHide")
     q-card
       q-card-section(class="row items-center")
-        q-form(class="q-gutter-md" @submit="onEditClient")
+        q-form(class="q-gutter-md" @submit="onUpdate")
           q-input(filled label="Your Fullname *" hint="Name and surname"
             v-model="client.fullname"
             lazy-rules :rules="[ val => val && val.length > 5 || 'Please type Fullname > 5 chars']")
@@ -30,12 +30,13 @@ import functions from "../../utils/functions";
 import VALIDATORS from "../../utils/validators";
 import ERRORS from "../../utils/errors";
 import entityLoads from "../../mixins/entity_loads";
+import notifications from "../../mixins/notifications";
 
 export default {
-  mixins: [entityLoads],
+  mixins: [entityLoads, notifications],
   data() {
     return {
-      clnt_edit: false,
+      dlg: false,
       client_companies: [],
       old_client_companies: [],
     }
@@ -53,9 +54,9 @@ export default {
         this.errors.push(err);
       }
     },
-    onEditClient(evt) {
-      this.clnt_edit = false;
-      this.editClient();
+    onUpdate(evt) {
+      this.dlg = false;
+      this.update();
       this.rebindCompaniesToClient();
     },
     onResetPassword(){
@@ -80,9 +81,10 @@ export default {
         this.errors.push(err);
       }
     },
-    async editClient() {
+    async update() {
       try {
         const response = await this.$api.clients.update(this.client);
+        this.showNotif("Client updated");
         await this.getClients();
       } catch(err)  {
         this.errors.push(err);
@@ -110,7 +112,7 @@ export default {
   created() {
     this.getClientById();
     this.getCompanies();
-    this.clnt_edit=true;
+    this.dlg=true;
   }
 }
 </script>

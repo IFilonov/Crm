@@ -3,8 +3,8 @@
     q-btn(label="Delete" type="Delete" color="primary" glossy dense style="margin:5px;"
       v-bind:disabled="isClientsDelBtnDisabled"
       @click="deleteClients")
-    q-btn(label="Create" color="primary" @click="qDialogs.client_new = true" glossy dense)
-    q-dialog(v-model="qDialogs.client_new" persistent)
+    q-btn(label="Create" color="primary" @click="dlg = true" glossy dense)
+    q-dialog(v-model="dlg" persistent)
       q-card
         q-card-section(class="row items-center")
           q-form(class="q-gutter-md" @submit="sendClient(client)" @reset="reset(client)")
@@ -27,7 +27,7 @@
       :data="clients"
       :pagination.sync="pagination"
       :selected-rows-label="getSelectedString"
-      :selected.sync="clients_selected"
+      :selected.sync="selected"
       :visible-columns=['fullname', 'email', 'phone'])
     router-view
 </template>
@@ -37,18 +37,16 @@ import functions from "../../utils/functions";
 import VALIDATORS from "../../utils/validators";
 import ERRORS from "../../utils/errors";
 import entityLoads from "../../mixins/entity_loads";
+import notifications from "../../mixins/notifications";
 
 export default {
-  mixins: [entityLoads],
+  mixins: [entityLoads, notifications],
   data() {
     return {
       pagination: {
         rowsPerPage: 20 // current rows per page being displayed
       },
-      clients_selected: [],
-      qDialogs: {
-        client_new: false
-      },
+      dlg: false
     }
   },
   methods: {
@@ -57,27 +55,29 @@ export default {
     },
     async sendClient(client) {
       try {
-        this.qDialogs.client_new = false;
+        this.dlg = false;
         const response = await this.$api.clients.create(client);
         this.reset(this.client);
+        this.showNotif("Client created");
         await this.getClients();
       } catch(err)  {
-        this.errors.push(err);
+        this.showErrNotif( { message: "Client not created " , error: err } );
       }
     },
     async deleteClients() {
       try {
-        let clients_selected = { ids:  this.clients_selected.map(client => client.id ) };
+        let clients_selected = { ids:  this.selected.map(client => client.id ) };
         const response = await this.$api.clients.delete(clients_selected);
-        this.clients_selected = [];
+        this.selected = [];
+        this.showNotif("Client(s) deleted");
         await this.getClients();
       } catch(err) {
         this.errors.push(err);
       }
     },
     getSelectedString () {
-      return this.clients_selected.length === 0 ? '' :
-          `${this.clients_selected.length} record${this.clients_selected.length > 1 ? 's' : ''} selected of ${this.clients.length}`
+      return this.selected.length === 0 ? '' :
+          `${this.selected.length} record${this.selected.length > 1 ? 's' : ''} selected of ${this.clients.length}`
     },
     onDblClickClientsTable(evt, row, index) {
       let id = row.id;
@@ -89,7 +89,7 @@ export default {
       return VALIDATORS.EMAIL.test(this.client.email) || ERRORS.EMAIL_NOT_VALID;
     },
     isClientsDelBtnDisabled() {
-      return this.clients_selected.length === 0;
+      return this.selected.length === 0;
     }
   },
   mounted() {

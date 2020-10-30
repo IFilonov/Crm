@@ -22,7 +22,7 @@ export default {
       clients: [],
       companies: [],
       devices: [],
-      errors: []
+      selected: []
     }
   },
   methods: {
