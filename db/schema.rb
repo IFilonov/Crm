@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_10_10_154757) do
+ActiveRecord::Schema.define(version: 2020_10_29_195755) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -53,6 +53,17 @@ ActiveRecord::Schema.define(version: 2020_10_10_154757) do
     t.index ["juristic_type_id"], name: "index_companies_on_juristic_type_id"
   end
 
+  create_table "devices", force: :cascade do |t|
+    t.string "name"
+    t.string "type"
+    t.string "serial"
+    t.bigint "company_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["company_id"], name: "index_devices_on_company_id"
+    t.index ["serial"], name: "index_devices_on_serial", unique: true
+  end
+
   create_table "juristic_types", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", precision: 6, null: false
@@ -79,4 +90,5 @@ ActiveRecord::Schema.define(version: 2020_10_10_154757) do
   add_foreign_key "clients_companies", "clients"
   add_foreign_key "clients_companies", "companies"
   add_foreign_key "companies", "juristic_types"
+  add_foreign_key "devices", "companies"
 end
