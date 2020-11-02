@@ -58,10 +58,11 @@ export default {
         this.dlg = false;
         const response = await this.$api.clients.create(client);
         this.reset(this.client);
-        this.showNotif("Client created");
+         response.data.length > 0 ? this.showErrNotif({ message: response.data } )
+            : this.showNotif("Client created");
         await this.getClients();
       } catch(err)  {
-        this.showErrNotif( { message: "Client not created " , error: err } );
+        this.showErrNotif( { message: "Client not created " } );
       }
     },
     async deleteClients() {

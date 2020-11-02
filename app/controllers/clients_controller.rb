@@ -13,7 +13,11 @@ class ClientsController < ApplicationController
     client = Client.new(client_params)
     client.password = password
     client.password_confirmation = password
-    client.save!
+    if client.save
+      render :json => client
+    else
+      render :json => client.errors.full_messages
+    end
   end
 
   def client_email
