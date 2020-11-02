@@ -34,8 +34,13 @@
       option-label="name"
       :pagination.sync="pagination"
       :selected.sync="selected"
+      :filter="filter"
       :selected-rows-label="getSelectedString"
       :visible-columns=['name', 'inn', 'jur_type', 'ogrn'])
+      template(v-slot:top-right)
+        q-input(borderless dense debounce="300" v-model="filter" placeholder="Search")
+          template(v-slot:append)
+            q-icon(name="fas fa-search")
     q-dialog(v-model="qDialogs.company_edit" persistent)
       q-card
         q-card-section(class="row items-center")
@@ -102,6 +107,7 @@ export default {
         company_edit: false,
         dadata_new: false
       },
+      filter: ''
     }
   },
   methods: {
