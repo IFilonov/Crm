@@ -24,11 +24,15 @@
     br
     q-table(dense row-key="email" selection="multiple"
       @row-dblclick="onDblClickClientsTable"
-      :data="clients"
+      :loading="loading"
+      :data="$store.state.clients"
       :pagination.sync="pagination"
       :selected-rows-label="getSelectedString"
       :selected.sync="selected"
       :visible-columns=['fullname', 'email', 'phone'])
+      template(v-slot:loading)
+        q-inner-loading(showing)
+          q-spinner-dots(size="50px" color="primary")
     router-view
 </template>
 
@@ -46,7 +50,8 @@ export default {
       pagination: {
         rowsPerPage: 20 // current rows per page being displayed
       },
-      dlg: false
+      dlg: false,
+      loading: true
     }
   },
   methods: {
@@ -60,7 +65,7 @@ export default {
         this.reset(this.client);
          response.data.length > 0 ? this.showErrNotif({ message: response.data } )
             : this.showNotif("Client created");
-        await this.getClients();
+        await this.$store.dispatch('getClients');
       } catch(err)  {
         this.showErrNotif( { message: "Client not created " } );
       }
@@ -71,14 +76,14 @@ export default {
         const response = await this.$api.clients.delete(clients_selected);
         this.selected = [];
         this.showNotif("Client(s) deleted");
-        await this.getClients();
+        await this.$store.dispatch('getClients');
       } catch(err) {
         this.errors.push(err);
       }
     },
     getSelectedString () {
       return this.selected.length === 0 ? '' :
-          `${this.selected.length} record${this.selected.length > 1 ? 's' : ''} selected of ${this.clients.length}`
+          `${this.selected.length} record${this.selected.length > 1 ? 's' : ''} selected of ${this.$store.state.clients.length}`
     },
     onDblClickClientsTable(evt, row, index) {
       let id = row.id;
@@ -94,7 +99,8 @@ export default {
     }
   },
   mounted() {
-    this.getClients();
+    this.$store.dispatch('getClients')
+      .finally(() => ( this.loading = false ))
   }
 }
 </script>

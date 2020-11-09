@@ -14,7 +14,7 @@
             lazy-rules :rules="[ val => val && val.length > 0 || 'Please type device serial number']")
           q-select(
             v-model="device.company_id" label="Company"
-            :options="companies" option-value="id" option-label="name"
+            :options="$store.state.companies" option-value="id" option-label="name"
             emit-value map-options
             transition-show="flip-up" transition-hide="flip-down")
           div
@@ -69,7 +69,7 @@ export default {
   },
   created() {
     this.getDeviceById();
-    this.getCompanies();
+    this.$store.dispatch('getCompanies');
     this.dlg = true;
   }
 }

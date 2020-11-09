@@ -15,7 +15,7 @@
           q-select(
             v-model="client_companies" label="Companies"
             multiple counter use-chips
-            :options="companies" option-value="id" option-label="name"
+            :options="$store.state.companies" option-value="id" option-label="name"
             emit-value map-options
             transition-show="flip-up" transition-hide="flip-down")
           div
@@ -85,7 +85,7 @@ export default {
       try {
         const response = await this.$api.clients.update(this.client);
         this.showNotif("Client updated");
-        await this.getClients();
+        await this.$store.dispatch('getClients');
       } catch(err)  {
         this.errors.push(err);
       }
@@ -111,7 +111,7 @@ export default {
   },
   created() {
     this.getClientById();
-    this.getCompanies();
+    this.$store.dispatch('getCompanies');
     this.dlg=true;
   }
 }

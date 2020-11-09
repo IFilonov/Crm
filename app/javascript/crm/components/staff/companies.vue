@@ -29,7 +29,7 @@
     dadata(:dadata_new.sync="qDialogs.dadata_new" v-on:dadata_company="onSetDadata")
     br
     q-table(dense row-key="name" selection="multiple"
-      :data="companies"
+      :data="$store.state.companies"
       @row-dblclick="onDblClickCompaniesTable"
       option-label="name"
       :pagination.sync="pagination"
@@ -41,6 +41,9 @@
         q-input(borderless dense debounce="300" v-model="filter" placeholder="Search")
           template(v-slot:append)
             q-icon(name="fas fa-search")
+      template(v-slot:loading)
+        q-inner-loading(showing)
+          q-spinner-dots(size="50px" color="primary")
     q-dialog(v-model="qDialogs.company_edit" persistent)
       q-card
         q-card-section(class="row items-center")
@@ -63,14 +66,14 @@
             q-select(
               v-model="company_clients" label="Clients"
               multiple counter use-chips dense
-              :options="clients" option-value="id" option-label="fullname"
+              :options="$store.state.clients" option-value="id" option-label="fullname"
               emit-value map-options
               transition-show="flip-up" transition-hide="flip-down")
             p(dense) Bind with devices:
             q-select(
               v-model="company_devices" label="Devices"
               multiple counter use-chips dense
-              :options="devices" option-value="id" option-label="name"
+              :options="$store.state.devices" option-value="id" option-label="name"
               emit-value map-options
               transition-show="flip-up" transition-hide="flip-down")
             div
@@ -107,7 +110,8 @@ export default {
         company_edit: false,
         dadata_new: false
       },
-      filter: ''
+      filter: '',
+      loading: true
     }
   },
   methods: {
@@ -127,7 +131,7 @@ export default {
       try {
         const response = await this.$api.companies.update(this.company);
         this.showNotif("Company updated");
-        await this.getCompanies();
+        await this.$store.dispatch('getCompanies');
       } catch(err)  {
         this.errors.push(err);
       }
@@ -151,7 +155,7 @@ export default {
         const response = await this.$api.companies.create(company);
         this.reset(this.company);
         this.showNotif("Company created");
-        await this.getCompanies();
+        await this.$store.dispatch('getCompanies');
       } catch(err)  {
         this.errors.push(err);
       }
@@ -170,14 +174,14 @@ export default {
         const response = await this.$api.companies.delete(companies_selected);
         this.selected = [];
         this.showNotif("Company(ies) deleted");
-        await this.getCompanies();
+        await this.$store.dispatch('getCompanies');
       } catch(err) {
         this.errors.push(err);
       }
     },
     getSelectedString () {
       return this.selected.length === 0 ? '' :
-          `${this.selected.length} record${this.selected.length > 1 ? 's' : ''} selected of ${this.companies.length}`
+          `${this.selected.length} record${this.selected.length > 1 ? 's' : ''} selected of ${this.$store.state.companies.length}`
     },
     onDblClickCompaniesTable(evt, row, index) {
       this.company = Object.assign({},row);
@@ -211,9 +215,10 @@ export default {
   },
   mounted() {
     this.getJuristicTypes();
-    this.getCompanies();
-    this.getClients();
-    this.getDevices();
+    this.$store.dispatch('getCompanies')
+        .finally(() => ( this.loading = false ))
+    this.$store.dispatch('getClients');
+    this.$store.dispatch('getDevices');
   }
 }
 </script>

@@ -6,14 +6,13 @@
     q-page-container
       q-card
         q-card-section
-          q-table(title="Companies" dense :data="companies" row-key="name" :pagination.sync="pagination")
+          q-table(title="Companies" dense :data="$store.state.companies" row-key="name" :pagination.sync="pagination")
 </template>
 
 <script>
 export default {
   data() {
     return {
-      companies: [],
       errors: [],
       pagination: {
         rowsPerPage: 20 // current rows per page being displayed
@@ -21,17 +20,9 @@ export default {
     }
   },
   methods: {
-    async getCompanies() {
-      try {
-        const response = await this.$api.client.companies()
-        this.companies = response.data;
-      } catch(err) {
-        this.errors.push(err);
-      }
-    },
   },
   mounted() {
-    this.getCompanies();
+    this.$store.dispatch('getCompanies');
   }
 }
 </script>
