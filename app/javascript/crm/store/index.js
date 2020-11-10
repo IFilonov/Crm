@@ -7,7 +7,9 @@ export default new Vuex.Store(  {
   state: {
     clients: [],
     companies: [],
-    devices: []
+    devices: [],
+    juristic_types: [],
+    client_companies: []
   },
   mutations: {
     CHANGE_CLIENTS: (state, clients) => {
@@ -18,6 +20,12 @@ export default new Vuex.Store(  {
     },
     CHANGE_DEVICES: (state, devices) => {
       state.devices  = devices;
+    },
+    CHANGE_JURTYPES: (state, juristic_types) => {
+      state.juristic_types  = juristic_types;
+    },
+    CHANGE_CLIENT_COMPANIES: (state, client_companies) => {
+      state.client_companies  = client_companies;
     }
   },
   actions: {
@@ -32,6 +40,14 @@ export default new Vuex.Store(  {
     getDevices: ( context ) => {
       return Vue.prototype.$api.devices.index()
         .then(({ data }) => (context.commit('CHANGE_DEVICES', data)))
+    },
+    getJurTypes: ( context ) => {
+      return Vue.prototype.$api.juristic_types.index()
+        .then(({ data }) => (context.commit('CHANGE_JURTYPES', data)))
+    },
+    getClientCompanies: ( context ) => {
+      return Vue.prototype.$api.client.companies()
+        .then(({ data }) => (context.commit('CHANGE_CLIENT_COMPANIES', data)))
     }
   },
   modules: {},

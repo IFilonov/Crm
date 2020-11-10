@@ -1,5 +1,5 @@
 class CompaniesController < ApplicationController
-  before_action :authenticate_staff!, except: [:client_companies]
+  before_action :authenticate_staff!
   before_action :find_client, only: [:client_companies]
   before_action :find_company, only: [:update, :clients, :devices, :rebind_refs_data]
 

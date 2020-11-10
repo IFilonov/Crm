@@ -38,6 +38,7 @@ export default {
   },
   mounted() {
     this.staffEmail();
+    this.$store.dispatch('getJurTypes');
     setTimeout(() => {
       this.$q.loading.hide()
     }, 1000);

@@ -19,7 +19,7 @@
               lazy-rules :rules="[ val => val && val.toString().length > 9 || 'Please type OGRN > 9 only digits']")
             q-select(
               v-model="company.juristic_type_id" label="Juristic type"
-              :options="juristic_types" option-value="id" option-label="name"
+              :options="$store.state.juristic_types" option-value="id" option-label="name"
               emit-value map-options
               transition-show="flip-up" transition-hide="flip-down")
             q-btn(label="Submit" type="submit" color="primary" glossy dense)
@@ -59,7 +59,7 @@
               lazy-rules :rules="[ val => val && val.toString().length > 10 || 'Please type OGRN > 10 only digits']")
             q-select(
               v-model="company.juristic_type_id" label="Juristic type"
-              :options="juristic_types" option-value="id" option-label="name"
+              :options="$store.state.juristic_types" option-value="id" option-label="name"
               emit-value map-options dense
               transition-show="flip-up" transition-hide="flip-down")
             p(dense) Bind with clients:
@@ -99,7 +99,6 @@ export default {
       old_company_clients: [],
       company_devices: [],
       old_company_devices: [],
-      juristic_types: [],
       pagination: {
         rowsPerPage: 20 // current rows per page being displayed
       },
@@ -160,14 +159,6 @@ export default {
         this.errors.push(err);
       }
     },
-    async getJuristicTypes() {
-      try {
-        const response = await this.$api.juristic_types.index();
-        this.juristic_types = response.data;
-      } catch(err) {
-        this.errors.push(err);
-      }
-    },
     async deleteCompanies() {
       try {
         let companies_selected = { ids:  this.selected.map(company => company.id ) } ;
@@ -214,11 +205,10 @@ export default {
     }
   },
   mounted() {
-    this.getJuristicTypes();
-    this.$store.dispatch('getCompanies')
-        .finally(() => ( this.loading = false ))
     this.$store.dispatch('getClients');
     this.$store.dispatch('getDevices');
+    this.$store.dispatch('getCompanies')
+        .finally(() => ( this.loading = false ))
   }
 }
 </script>

@@ -6,7 +6,7 @@
     q-page-container
       q-card
         q-card-section
-          q-table(title="Companies" dense :data="$store.state.companies" row-key="name" :pagination.sync="pagination")
+          q-table(title="Companies" dense :data="$store.state.client_companies" row-key="name" :pagination.sync="pagination")
 </template>
 
 <script>
@@ -22,7 +22,7 @@ export default {
   methods: {
   },
   mounted() {
-    this.$store.dispatch('getCompanies');
+    this.$store.dispatch('getClientCompanies');
   }
 }
 </script>
