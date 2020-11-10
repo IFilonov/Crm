@@ -19,7 +19,7 @@
               lazy-rules :rules="[ val => val && val.length > 0 || 'Please type device serial number']")
             q-select(
               v-model="device.company_id" label="Company"
-              :options="$store.state.companies" option-value="id" option-label="name"
+              :options="companies" option-value="id" option-label="name"
               emit-value map-options
               transition-show="flip-up" transition-hide="flip-down")
             div
@@ -29,7 +29,7 @@
     br
     q-table(dense row-key="serial" selection="multiple"
       @row-dblclick="onDblClickDevicesTable"
-      :data="$store.state.devices"
+      :data="devices"
       :pagination.sync="pagination"
       :selected-rows-label="getSelectedString"
       :selected.sync="selected"
@@ -44,6 +44,7 @@
 import functions from "../../utils/functions";
 import entityLoads from "../../mixins/entity_loads";
 import notifications from "../../mixins/notifications";
+import { mapState } from 'vuex';
 
 export default {
   mixins: [entityLoads,notifications],
@@ -92,6 +93,7 @@ export default {
     }
   },
   computed: {
+    ...mapState(['companies','devices']),
     isDevicesDelBtnDisabled() {
       return this.selected.length === 0;
     }

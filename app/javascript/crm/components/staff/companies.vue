@@ -19,7 +19,7 @@
               lazy-rules :rules="[ val => val && val.toString().length > 9 || 'Please type OGRN > 9 only digits']")
             q-select(
               v-model="company.juristic_type_id" label="Juristic type"
-              :options="$store.state.juristic_types" option-value="id" option-label="name"
+              :options="juristic_types" option-value="id" option-label="name"
               emit-value map-options
               transition-show="flip-up" transition-hide="flip-down")
             q-btn(label="Submit" type="submit" color="primary" glossy dense)
@@ -29,7 +29,7 @@
     dadata(:dadata_new.sync="qDialogs.dadata_new" v-on:dadata_company="onSetDadata")
     br
     q-table(dense row-key="name" selection="multiple"
-      :data="$store.state.companies"
+      :data="companies"
       @row-dblclick="onDblClickCompaniesTable"
       option-label="name"
       :pagination.sync="pagination"
@@ -59,21 +59,21 @@
               lazy-rules :rules="[ val => val && val.toString().length > 10 || 'Please type OGRN > 10 only digits']")
             q-select(
               v-model="company.juristic_type_id" label="Juristic type"
-              :options="$store.state.juristic_types" option-value="id" option-label="name"
+              :options="juristic_types" option-value="id" option-label="name"
               emit-value map-options dense
               transition-show="flip-up" transition-hide="flip-down")
             p(dense) Bind with clients:
             q-select(
               v-model="company_clients" label="Clients"
               multiple counter use-chips dense
-              :options="$store.state.clients" option-value="id" option-label="fullname"
+              :options="clients" option-value="id" option-label="fullname"
               emit-value map-options
               transition-show="flip-up" transition-hide="flip-down")
             p(dense) Bind with devices:
             q-select(
               v-model="company_devices" label="Devices"
               multiple counter use-chips dense
-              :options="$store.state.devices" option-value="id" option-label="name"
+              :options="devices" option-value="id" option-label="name"
               emit-value map-options
               transition-show="flip-up" transition-hide="flip-down")
             div
@@ -86,6 +86,7 @@ import functions from "../../utils/functions";
 import dadata from "./dadata";
 import entityLoads from "../../mixins/entity_loads";
 import notifications from "../../mixins/notifications";
+import { mapState } from 'vuex'
 
 export default {
   mixins: [entityLoads, notifications],
@@ -172,7 +173,7 @@ export default {
     },
     getSelectedString () {
       return this.selected.length === 0 ? '' :
-          `${this.selected.length} record${this.selected.length > 1 ? 's' : ''} selected of ${this.$store.state.companies.length}`
+          `${this.selected.length} record${this.selected.length > 1 ? 's' : ''} selected of ${this.companies.length}`
     },
     onDblClickCompaniesTable(evt, row, index) {
       this.company = Object.assign({},row);
@@ -200,6 +201,7 @@ export default {
     }
   },
   computed: {
+    ...mapState(['clients', 'companies', 'devices', 'juristic_types']),
     isCompaniesDelBtnDisabled() {
       return this.selected.length === 0;
     }

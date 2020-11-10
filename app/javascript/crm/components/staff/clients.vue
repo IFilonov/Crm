@@ -25,7 +25,7 @@
     q-table(dense row-key="email" selection="multiple"
       @row-dblclick="onDblClickClientsTable"
       :loading="loading"
-      :data="$store.state.clients"
+      :data="clients"
       :pagination.sync="pagination"
       :selected-rows-label="getSelectedString"
       :selected.sync="selected"
@@ -42,6 +42,7 @@ import VALIDATORS from "../../utils/validators";
 import ERRORS from "../../utils/errors";
 import entityLoads from "../../mixins/entity_loads";
 import notifications from "../../mixins/notifications";
+import { mapState } from 'vuex'
 
 export default {
   mixins: [entityLoads, notifications],
@@ -83,7 +84,7 @@ export default {
     },
     getSelectedString () {
       return this.selected.length === 0 ? '' :
-          `${this.selected.length} record${this.selected.length > 1 ? 's' : ''} selected of ${this.$store.state.clients.length}`
+          `${this.selected.length} record${this.selected.length > 1 ? 's' : ''} selected of ${this.clients.length}`
     },
     onDblClickClientsTable(evt, row, index) {
       let id = row.id;
@@ -91,6 +92,7 @@ export default {
     },
   },
   computed: {
+    ...mapState(['clients']),
     validEmail() {
       return VALIDATORS.EMAIL.test(this.client.email) || ERRORS.EMAIL_NOT_VALID;
     },
