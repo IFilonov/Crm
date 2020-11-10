@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import createPersistedState from "vuex-persistedstate";
 
 Vue.use(Vuex)
 
@@ -42,8 +43,10 @@ export default new Vuex.Store(  {
         .then(({ data }) => (context.commit('CHANGE_DEVICES', data)))
     },
     getJurTypes: ( context ) => {
-      return Vue.prototype.$api.juristic_types.index()
-        .then(({ data }) => (context.commit('CHANGE_JURTYPES', data)))
+      if (context.state.juristic_types.length == 0) {
+        return Vue.prototype.$api.juristic_types.index()
+          .then(({data}) => (context.commit('CHANGE_JURTYPES', data)))
+      }
     },
     getClientCompanies: ( context ) => {
       return Vue.prototype.$api.client.companies()
@@ -51,6 +54,6 @@ export default new Vuex.Store(  {
     }
   },
   modules: {},
-  plugins: []
+  plugins: [createPersistedState()]
   }
 )
