@@ -42,7 +42,7 @@ import VALIDATORS from "../../utils/validators";
 import ERRORS from "../../utils/errors";
 import entityLoads from "../../mixins/entity_loads";
 import notifications from "../../mixins/notifications";
-import { mapState } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 
 export default {
   mixins: [entityLoads, notifications],
@@ -56,6 +56,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['getClients']),
     reset(entity) {
       functions.resetEntity(entity);
     },
@@ -66,7 +67,7 @@ export default {
         this.reset(this.client);
          response.data.length > 0 ? this.showErrNotif({ message: response.data } )
             : this.showNotif("Client created");
-        await this.$store.dispatch('getClients');
+        await this.getClients();
       } catch(err)  {
         this.showErrNotif( { message: "Client not created " } );
       }
@@ -77,7 +78,7 @@ export default {
         const response = await this.$api.clients.delete(clients_selected);
         this.selected = [];
         this.showNotif("Client(s) deleted");
-        await this.$store.dispatch('getClients');
+        await this.getClients();
       } catch(err) {
         this.errors.push(err);
       }
@@ -101,7 +102,7 @@ export default {
     }
   },
   mounted() {
-    this.$store.dispatch('getClients')
+    this.getClients()
       .finally(() => ( this.loading = false ))
   }
 }

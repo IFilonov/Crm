@@ -86,7 +86,7 @@ import functions from "../../utils/functions";
 import dadata from "./dadata";
 import entityLoads from "../../mixins/entity_loads";
 import notifications from "../../mixins/notifications";
-import { mapState } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 
 export default {
   mixins: [entityLoads, notifications],
@@ -115,6 +115,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['getClients','getCompanies','getDevices']),
     onSetDadata(value){
       this.company = value;
       this.qDialogs.dadata_new = false;
@@ -131,7 +132,7 @@ export default {
       try {
         const response = await this.$api.companies.update(this.company);
         this.showNotif("Company updated");
-        await this.$store.dispatch('getCompanies');
+        await this.getCompanies();
       } catch(err)  {
         this.errors.push(err);
       }
@@ -155,7 +156,7 @@ export default {
         const response = await this.$api.companies.create(company);
         this.reset(this.company);
         this.showNotif("Company created");
-        await this.$store.dispatch('getCompanies');
+        await this.getCompanies();
       } catch(err)  {
         this.errors.push(err);
       }
@@ -166,7 +167,7 @@ export default {
         const response = await this.$api.companies.delete(companies_selected);
         this.selected = [];
         this.showNotif("Company(ies) deleted");
-        await this.$store.dispatch('getCompanies');
+        await this.getCompanies();
       } catch(err) {
         this.errors.push(err);
       }
@@ -207,9 +208,9 @@ export default {
     }
   },
   mounted() {
-    this.$store.dispatch('getClients');
-    this.$store.dispatch('getDevices');
-    this.$store.dispatch('getCompanies')
+    this.getClients();
+    this.getDevices();
+    this.getCompanies()
         .finally(() => ( this.loading = false ))
   }
 }

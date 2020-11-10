@@ -44,7 +44,7 @@
 import functions from "../../utils/functions";
 import entityLoads from "../../mixins/entity_loads";
 import notifications from "../../mixins/notifications";
-import { mapState } from 'vuex';
+import { mapState, mapActions } from 'vuex'
 
 export default {
   mixins: [entityLoads,notifications],
@@ -58,6 +58,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['getClients','getCompanies','getDevices']),
     reset(entity) {
       functions.resetEntity(entity);
     },
@@ -67,7 +68,7 @@ export default {
         const response = await this.$api.devices.create(device);
         this.reset(this.device);
         this.showNotif("Device created");
-        await this.$store.dispatch('getDevices');
+        await this.getDevices();
       } catch(err)  {
         this.errors.push(err);
       }
@@ -78,7 +79,7 @@ export default {
         const response = await this.$api.devices.delete(devices_selected);
         this.selected = [];
         this.showNotif("Device(s) deleted");
-        await this.$store.dispatch('getClients');
+        await this.getClients();
       } catch(err) {
         this.errors.push(err);
       }
@@ -99,14 +100,14 @@ export default {
     }
   },
   mounted() {
-    this.$store.dispatch('getDevices')
+    this.getDevices()
         .finally(() => ( this.loading = false ))
-    this.$store.dispatch('getCompanies');
+    this.getCompanies();
   },
   watch:{
     $route (to, from){
       if (this.$route.name === 'Devices') {
-        this.$store.dispatch('getDevices');
+        this.getDevices();
       }
     }
   }
