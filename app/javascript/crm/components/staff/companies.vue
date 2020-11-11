@@ -211,7 +211,18 @@ export default {
     this.getClients();
     this.getDevices();
     this.getCompanies()
-        .finally(() => ( this.loading = false ))
+        .finally(() => ( this.loading = false ));
+    this.$cable.subscribe({
+      channel: 'CompaniesChannels',
+      room: 'public'
+    });
+  },
+  channels: {
+    CompaniesChannels: {
+      received: (data) => {
+         console.log(data);
+      }
+    }
   }
 }
 </script>

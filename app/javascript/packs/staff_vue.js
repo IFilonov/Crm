@@ -11,6 +11,7 @@ import '../crm/api'
 import '../crm/quasar'
 import router from '../crm/router'
 import store from '../crm/store'
+import '../crm/sockets'
 
 document.addEventListener('DOMContentLoaded', () => {
   const app = new Vue({
