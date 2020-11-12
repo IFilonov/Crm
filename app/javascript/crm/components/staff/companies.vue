@@ -217,10 +217,10 @@ export default {
   channels: {
     CompaniesChannels: {
       received(data) {
-        let new_companies = this.companies.filter(function( company ) {
-          return company.id !== data.company.id;
-        });
+        let new_companies = functions.arrFilterById(this.companies, data.company.id);
+        let jur_type = functions.arrFilterById(this.juristic_types, data.company.juristic_type_id);
         let new_company = (({ id, name, juristic_type_id, inn, ogrn }) => ({ id, name, juristic_type_id, inn, ogrn }))(data.company);
+        new_company.jur_type = jur_type[0].name;
         new_companies.push(new_company);
         this.setCompanies(new_companies);
       }
