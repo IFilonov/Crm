@@ -101,7 +101,7 @@ export default {
       company_devices: [],
       old_company_devices: [],
       pagination: {
-        rowsPerPage: 20 // current rows per page being displayed
+        rowsPerPage: process.env.COMPANIES_PER_PAGE // current rows per page being displayed
       },
       qDialogs: {
         client_edit: false,

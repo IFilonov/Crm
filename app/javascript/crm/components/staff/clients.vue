@@ -49,7 +49,7 @@ export default {
   data() {
     return {
       pagination: {
-        rowsPerPage: 20 // current rows per page being displayed
+        rowsPerPage: process.env.CLIENTS_PER_PAGE // current rows per page being displayed
       },
       dlg: false,
       loading: true
@@ -104,6 +104,7 @@ export default {
   mounted() {
     this.getClients()
       .finally(() => ( this.loading = false ))
+    console.log(process.env.DADATA_API_KEY);
   }
 }
 </script>

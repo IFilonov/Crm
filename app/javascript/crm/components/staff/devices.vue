@@ -51,7 +51,7 @@ export default {
   data() {
     return {
       pagination: {
-        rowsPerPage: 5 // current rows per page being displayed
+        rowsPerPage: process.env.DEVICES_PER_PAGE // current rows per page being displayed
       },
       dlg: false,
       loading: true

@@ -15,7 +15,7 @@ export default {
     return {
       errors: [],
       pagination: {
-        rowsPerPage: 20 // current rows per page being displayed
+        rowsPerPage: process.env.COMPANIES_PER_PAGE // current rows per page being displayed
       },
     }
   },

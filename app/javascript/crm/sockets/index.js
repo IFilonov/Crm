@@ -4,7 +4,7 @@ import store from '../store'
 
 Vue.use(ActionCableVue, {
   debug: true,
-  debugLevel: 'error',
+  debugLevel: process.env.SOCKETS_DEBUG_LEVEL,
   connectImmediately: true,
   store
 });
