@@ -38,6 +38,9 @@ export default new Vuex.Store(  {
       return Vue.prototype.$api.companies.index()
         .then(({ data }) => (context.commit('CHANGE_COMPANIES', data)))
     },
+    setCompanies: ( context, data ) => {
+      context.commit('CHANGE_COMPANIES', data);
+    },
     getDevices: ( context ) => {
       return Vue.prototype.$api.devices.index()
         .then(({ data }) => (context.commit('CHANGE_DEVICES', data)))

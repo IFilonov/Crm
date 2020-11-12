@@ -115,7 +115,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['getClients','getCompanies','getDevices']),
+    ...mapActions(['getClients','getCompanies','getDevices','setCompanies']),
     onSetDadata(value){
       this.company = value;
       this.qDialogs.dadata_new = false;
@@ -132,7 +132,6 @@ export default {
       try {
         const response = await this.$api.companies.update(this.company);
         this.showNotif("Company updated");
-        await this.getCompanies();
       } catch(err)  {
         this.errors.push(err);
       }
@@ -156,7 +155,6 @@ export default {
         const response = await this.$api.companies.create(company);
         this.reset(this.company);
         this.showNotif("Company created");
-        await this.getCompanies();
       } catch(err)  {
         this.errors.push(err);
       }
@@ -213,14 +211,18 @@ export default {
     this.getCompanies()
         .finally(() => ( this.loading = false ));
     this.$cable.subscribe({
-      channel: 'CompaniesChannels',
-      room: 'public'
+      channel: 'CompaniesChannels'
     });
   },
   channels: {
     CompaniesChannels: {
-      received: (data) => {
-         console.log(data);
+      received(data) {
+        let new_companies = this.companies.filter(function( company ) {
+          return company.id !== data.company.id;
+        });
+        let new_company = (({ id, name, juristic_type_id, inn, ogrn }) => ({ id, name, juristic_type_id, inn, ogrn }))(data.company);
+        new_companies.push(new_company);
+        this.setCompanies(new_companies);
       }
     }
   }
