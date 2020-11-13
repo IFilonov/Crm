@@ -18,7 +18,7 @@
             emit-value map-options
             transition-show="flip-up" transition-hide="flip-down")
           div
-            q-btn(label="Update" type="submit" color="primary" glossy dense  style="margin:5px;")
+            q-btn(label="Update" type="submit" color="primary" glossy dense style="margin:5px;")
             q-btn(flat label="Cancel" color="primary" v-close-popup style="margin:5px;")
 </template>
 
@@ -35,7 +35,7 @@ export default {
     }
   },
   methods: {
-    onHide(evt) {
+    onHide() {
       this.$router.push({ name: 'Devices' });
     },
     async getDeviceById() {
@@ -46,7 +46,7 @@ export default {
         this.errors.push(err);
       }
     },
-    onUpdate(evt) {
+    onUpdate() {
       this.dlg = false;
       this.edit();
     },
@@ -55,7 +55,7 @@ export default {
     },
     async edit() {
       try {
-        const response = await this.$api.devices.update(this.device);
+        await this.$api.devices.update(this.device);
         this.showNotif("Device updated");
       } catch(err)  {
         this.showErrNotif( { message: "Device not updated " , error: err } );

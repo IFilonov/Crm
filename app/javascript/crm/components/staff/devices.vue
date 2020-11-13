@@ -65,7 +65,7 @@ export default {
     async sendDevice(device) {
       try {
         this.dlg = false;
-        const response = await this.$api.devices.create(device);
+        await this.$api.devices.create(device);
         this.reset(this.device);
         this.showNotif("Device created");
         await this.getDevices();
@@ -76,7 +76,7 @@ export default {
     async deleteDevices() {
       try {
         let devices_selected = { ids:  this.selected.map(device => device.id) };
-        const response = await this.$api.devices.delete(devices_selected);
+        await this.$api.devices.delete(devices_selected);
         this.selected = [];
         this.showNotif("Device(s) deleted");
         await this.getClients();
@@ -84,7 +84,7 @@ export default {
         this.errors.push(err);
       }
     },
-    onDblClickDevicesTable(evt, row, index) {
+    onDblClickDevicesTable(evt, row) {
       let id = row.id;
       this.$router.push({ name: 'Device_edit', params: { id } });
     },
@@ -105,7 +105,7 @@ export default {
     this.getCompanies();
   },
   watch:{
-    $route (to, from){
+    $route (){
       if (this.$route.name === 'Devices') {
         this.getDevices();
       }

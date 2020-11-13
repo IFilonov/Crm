@@ -29,7 +29,7 @@ export default {
   props: ['dadata_new'],
   methods: {
     onAddDadata() {
-      this.$emit('dadata_company', (Object.assign({},this.dadata_company)));
+      this.$emit('dadata-company', (Object.assign({},this.dadata_company)));
       this.reset();
     },
     reset(){
@@ -55,9 +55,9 @@ export default {
         this.dadata_options = this.dadata_companies.filter(company => company.name.toLowerCase().indexOf(filter.toLowerCase()) > -1);
       } catch(err) {
         this.errors.push(err);
-      };
+      }
     },
-    filterFnAutoselect (val, update, abort) {
+    filterFnAutoselect (val, update) {
       // call abort() at any time if you can't retrieve data somehow
       update(
         () => {

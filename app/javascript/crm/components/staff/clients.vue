@@ -75,7 +75,7 @@ export default {
     async deleteClients() {
       try {
         let clients_selected = { ids:  this.selected.map(client => client.id ) };
-        const response = await this.$api.clients.delete(clients_selected);
+        await this.$api.clients.delete(clients_selected);
         this.selected = [];
         this.showNotif("Client(s) deleted");
         await this.getClients();
@@ -87,7 +87,7 @@ export default {
       return this.selected.length === 0 ? '' :
           `${this.selected.length} record${this.selected.length > 1 ? 's' : ''} selected of ${this.clients.length}`
     },
-    onDblClickClientsTable(evt, row, index) {
+    onDblClickClientsTable(evt, row) {
       let id = row.id;
       this.$router.push({ name: 'Client_edit', params: { id } });
     },
@@ -104,7 +104,7 @@ export default {
   mounted() {
     this.getClients()
       .finally(() => ( this.loading = false ))
-    console.log(process.env.DADATA_API_KEY);
+    // eslint-disable-next-line no-undef
   }
 }
 </script>

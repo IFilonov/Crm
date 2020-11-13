@@ -21,7 +21,7 @@
           div
             q-btn(label="Reset password" color="primary" @click="onResetPassword" glossy dense style="margin:5px;")
           div
-            q-btn(label="Update" type="submit" color="primary" glossy dense  style="margin:5px;")
+            q-btn(label="Update" type="submit" color="primary" glossy dense style="margin:5px;")
             q-btn(flat label="Cancel" color="primary" v-close-popup style="margin:5px;")
 </template>
 
@@ -42,7 +42,7 @@ export default {
     }
   },
   methods: {
-    onHide(evt) {
+    onHide() {
       this.$router.push({ name: 'Clients' });
     },
     async getClientById() {
@@ -54,7 +54,7 @@ export default {
         this.errors.push(err);
       }
     },
-    onUpdate(evt) {
+    onUpdate() {
       this.dlg = false;
       this.update();
       this.rebindCompaniesToClient();
@@ -76,14 +76,14 @@ export default {
     },
     async resetPassword() {
       try {
-        const response = await this.$api.clients.reset({ id: this.id });
+        await this.$api.clients.reset({ id: this.id });
       } catch(err)  {
         this.errors.push(err);
       }
     },
     async update() {
       try {
-        const response = await this.$api.clients.update(this.client);
+        await this.$api.clients.update(this.client);
         this.showNotif("Client updated");
         await this.$store.dispatch('getClients');
       } catch(err)  {
@@ -95,7 +95,7 @@ export default {
         let new_company_ids = functions.arrDiffs(this.client_companies, this.old_client_companies);
         let del_company_ids = functions.arrDiffs(this.old_client_companies, this.client_companies);
         let companies = { client_id: this.client["id"], new_company_ids: new_company_ids, del_company_ids: del_company_ids }
-        const response = await this.$api.client_companies.rebind_companies(companies);
+        await this.$api.client_companies.rebind_companies(companies);
       } catch(err)  {
         this.errors.push(err);
       }

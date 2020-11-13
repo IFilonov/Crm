@@ -3,7 +3,7 @@ import axios from 'axios'
 
 const token = document.head.querySelector('meta[name="csrf-token"]')
 axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content
-const  DADATA_API_KEY = process.env.DADATA_API_KEY
+const DADATA_API_KEY = process.env.DADATA_API_KEY
 
 const adapter = axios.create({
     baseURL: process.env.API_BASE_URL,

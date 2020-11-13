@@ -26,7 +26,7 @@
             q-btn(label="Load from Dadata" color="primary" @click="qDialogs.dadata_new = true" glossy dense)
             q-btn(label="Reset" type="reset" color="primary" flat class="q-ml-sm")
             q-btn(flat label="Cancel" color="primary" v-close-popup)
-    dadata(:dadata_new.sync="qDialogs.dadata_new" v-on:dadata_company="onSetDadata")
+    dadata(:dadata_new.sync="qDialogs.dadata_new" v-on:dadata-company="onSetDadata")
     br
     q-table(dense row-key="name" selection="multiple"
       :data="companies"
@@ -101,6 +101,7 @@ export default {
       company_devices: [],
       old_company_devices: [],
       pagination: {
+        // eslint-disable-next-line no-undef
         rowsPerPage: process.env.COMPANIES_PER_PAGE // current rows per page being displayed
       },
       qDialogs: {
@@ -120,7 +121,7 @@ export default {
       this.company = value;
       this.qDialogs.dadata_new = false;
     },
-    onEditCompany(evt) {
+    onEditCompany() {
       this.editCompany();
       this.rebindRefsData();
       this.qDialogs.company_edit = false;
@@ -130,7 +131,7 @@ export default {
     },
     async editCompany() {
       try {
-        const response = await this.$api.companies.update(this.company);
+        await this.$api.companies.update(this.company);
         this.showNotif("Company updated");
       } catch(err)  {
         this.errors.push(err);
@@ -144,7 +145,7 @@ export default {
         let del_device_ids = functions.arrDiffs(this.old_company_devices, this.company_devices);
         let data = { id: this.company.id, new_client_ids: new_client_ids, del_client_ids: del_client_ids,
           new_device_ids: new_device_ids, del_device_ids: del_device_ids};
-        const response = await this.$api.companies.rebind_refs_data(data);
+        await this.$api.companies.rebind_refs_data(data);
       } catch(err)  {
         this.errors.push(err);
       }
@@ -152,7 +153,7 @@ export default {
     async sendCompany(company) {
       try {
         this.qDialogs.company_new = false;
-        const response = await this.$api.companies.create(company);
+        await this.$api.companies.create(company);
         this.reset(this.company);
         this.showNotif("Company created");
       } catch(err)  {
@@ -162,7 +163,7 @@ export default {
     async deleteCompanies() {
       try {
         let companies_selected = { ids:  this.selected.map(company => company.id ) } ;
-        const response = await this.$api.companies.delete(companies_selected);
+        await this.$api.companies.delete(companies_selected);
         this.selected = [];
         this.showNotif("Company(ies) deleted");
         await this.getCompanies();
@@ -174,7 +175,7 @@ export default {
       return this.selected.length === 0 ? '' :
           `${this.selected.length} record${this.selected.length > 1 ? 's' : ''} selected of ${this.companies.length}`
     },
-    onDblClickCompaniesTable(evt, row, index) {
+    onDblClickCompaniesTable(evt, row) {
       this.company = Object.assign({},row);
       this.getCompanyClients(row);
       this.getCompanyDevices(row);
