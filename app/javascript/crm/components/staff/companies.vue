@@ -82,10 +82,10 @@
 </template>
 
 <script>
-import functions from "../../utils/functions";
-import dadata from "./dadata";
-import entityLoads from "../../mixins/entity_loads";
-import notifications from "../../mixins/notifications";
+import functions from '../../utils/functions';
+import dadata from './dadata';
+import entityLoads from '../../mixins/entity_loads';
+import notifications from '../../mixins/notifications';
 import { mapState, mapActions } from 'vuex'
 
 export default {
@@ -101,8 +101,7 @@ export default {
       company_devices: [],
       old_company_devices: [],
       pagination: {
-        // eslint-disable-next-line no-undef
-        rowsPerPage: process.env.COMPANIES_PER_PAGE // current rows per page being displayed
+        rowsPerPage: process.env.COMPANIES_PER_PAGE
       },
       qDialogs: {
         client_edit: false,
@@ -132,7 +131,7 @@ export default {
     async editCompany() {
       try {
         await this.$api.companies.update(this.company);
-        this.showNotif("Company updated");
+        this.showNotif('Company updated');
       } catch(err)  {
         this.errors.push(err);
       }
@@ -155,7 +154,7 @@ export default {
         this.qDialogs.company_new = false;
         await this.$api.companies.create(company);
         this.reset(this.company);
-        this.showNotif("Company created");
+        this.showNotif('Company created');
       } catch(err)  {
         this.errors.push(err);
       }
@@ -165,7 +164,7 @@ export default {
         let companies_selected = { ids:  this.selected.map(company => company.id ) } ;
         await this.$api.companies.delete(companies_selected);
         this.selected = [];
-        this.showNotif("Company(ies) deleted");
+        this.showNotif('Company(ies) deleted');
         await this.getCompanies();
       } catch(err) {
         this.errors.push(err);
@@ -173,7 +172,7 @@ export default {
     },
     getSelectedString () {
       return this.selected.length === 0 ? '' :
-          `${this.selected.length} record${this.selected.length > 1 ? 's' : ''} selected of ${this.companies.length}`
+        `${this.selected.length} record${this.selected.length > 1 ? 's' : ''} selected of ${this.companies.length}`
     },
     onDblClickCompaniesTable(evt, row) {
       this.company = Object.assign({},row);
@@ -210,7 +209,7 @@ export default {
     this.getClients();
     this.getDevices();
     this.getCompanies()
-        .finally(() => ( this.loading = false ));
+      .finally(() => ( this.loading = false ));
     this.$cable.subscribe({
       channel: 'CompaniesChannels'
     });

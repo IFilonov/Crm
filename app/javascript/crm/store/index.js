@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import createPersistedState from "vuex-persistedstate";
+import createPersistedState from 'vuex-persistedstate';
 
 Vue.use(Vuex)
 
@@ -17,7 +17,7 @@ export default new Vuex.Store(  {
       state.clients  = clients;
     },
     CHANGE_COMPANIES: (state, companies) => {
-        state.companies  = companies;
+      state.companies  = companies;
     },
     CHANGE_DEVICES: (state, devices) => {
       state.devices  = devices;
@@ -58,5 +58,4 @@ export default new Vuex.Store(  {
   },
   modules: {},
   plugins: [createPersistedState()]
-  }
-)
+})

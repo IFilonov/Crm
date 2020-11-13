@@ -6,8 +6,8 @@
 </template>
 
 <script>
-import navbar from "../shared/navbar";
-import dashboard from "./dashboard";
+import navbar from '../shared/navbar';
+import dashboard from './dashboard';
 
 export default {
   components: {

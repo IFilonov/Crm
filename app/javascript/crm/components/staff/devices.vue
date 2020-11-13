@@ -41,9 +41,9 @@
 </template>
 
 <script>
-import functions from "../../utils/functions";
-import entityLoads from "../../mixins/entity_loads";
-import notifications from "../../mixins/notifications";
+import functions from '../../utils/functions';
+import entityLoads from '../../mixins/entity_loads';
+import notifications from '../../mixins/notifications';
 import { mapState, mapActions } from 'vuex'
 
 export default {
@@ -67,7 +67,7 @@ export default {
         this.dlg = false;
         await this.$api.devices.create(device);
         this.reset(this.device);
-        this.showNotif("Device created");
+        this.showNotif('Device created');
         await this.getDevices();
       } catch(err)  {
         this.errors.push(err);
@@ -78,7 +78,7 @@ export default {
         let devices_selected = { ids:  this.selected.map(device => device.id) };
         await this.$api.devices.delete(devices_selected);
         this.selected = [];
-        this.showNotif("Device(s) deleted");
+        this.showNotif('Device(s) deleted');
         await this.getClients();
       } catch(err) {
         this.errors.push(err);
@@ -90,7 +90,7 @@ export default {
     },
     getSelectedString () {
       return this.selected.length === 0 ? '' :
-          `${this.selected.length} record${this.selected.length > 1 ? 's' : ''} selected of ${this.selected.length}`
+        `${this.selected.length} record${this.selected.length > 1 ? 's' : ''} selected of ${this.selected.length}`
     }
   },
   computed: {
@@ -101,7 +101,7 @@ export default {
   },
   mounted() {
     this.getDevices()
-        .finally(() => ( this.loading = false ))
+      .finally(() => ( this.loading = false ))
     this.getCompanies();
   },
   watch:{

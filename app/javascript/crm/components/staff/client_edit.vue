@@ -26,11 +26,11 @@
 </template>
 
 <script>
-import functions from "../../utils/functions";
-import VALIDATORS from "../../utils/validators";
-import ERRORS from "../../utils/errors";
-import entityLoads from "../../mixins/entity_loads";
-import notifications from "../../mixins/notifications";
+import functions from '../../utils/functions';
+import VALIDATORS from '../../utils/validators';
+import ERRORS from '../../utils/errors';
+import entityLoads from '../../mixins/entity_loads';
+import notifications from '../../mixins/notifications';
 
 export default {
   mixins: [entityLoads, notifications],
@@ -84,7 +84,7 @@ export default {
     async update() {
       try {
         await this.$api.clients.update(this.client);
-        this.showNotif("Client updated");
+        this.showNotif('Client updated');
         await this.$store.dispatch('getClients');
       } catch(err)  {
         this.errors.push(err);
@@ -94,7 +94,7 @@ export default {
       try {
         let new_company_ids = functions.arrDiffs(this.client_companies, this.old_client_companies);
         let del_company_ids = functions.arrDiffs(this.old_client_companies, this.client_companies);
-        let companies = { client_id: this.client["id"], new_company_ids: new_company_ids, del_company_ids: del_company_ids }
+        let companies = { client_id: this.client['id'], new_company_ids: new_company_ids, del_company_ids: del_company_ids }
         await this.$api.client_companies.rebind_companies(companies);
       } catch(err)  {
         this.errors.push(err);

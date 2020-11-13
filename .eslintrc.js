@@ -1,19 +1,33 @@
 module.exports = {
-    "env": {
-        "browser": true,
-        "es2021": true
-    },
-    "extends": [
-        "eslint:recommended",
-        "plugin:vue/essential"
+  root: true,
+
+  env: {
+    node: true,
+    es2021: true
+  },
+  extends: [
+    'eslint:recommended',
+    'plugin:vue/essential'
+  ],
+  parserOptions: {
+    parser: 'babel-eslint',
+    ecmaVersion: 2018,
+    sourceType: 'module'
+  },
+  plugins: [
+    'vue'
+  ],
+  rules: {
+    indent: [
+      'error', 2
     ],
-    "parserOptions": {
-        "ecmaVersion": 12,
-        "sourceType": "module"
-    },
-    "plugins": [
-        "vue"
+    'linebreak-style': [
+      'error',
+      'unix'
     ],
-    "rules": {
-    }
+    quotes: [
+      'error',
+      'single'
+    ]
+  }
 };

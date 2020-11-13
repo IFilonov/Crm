@@ -50,8 +50,7 @@ export default {
           company.inn = element.data.inn;
           company.ogrn = element.data.ogrn;
           this.dadata_companies.push(Object.assign({},company));
-          }
-        )
+        })
         this.dadata_options = this.dadata_companies.filter(company => company.name.toLowerCase().indexOf(filter.toLowerCase()) > -1);
       } catch(err) {
         this.errors.push(err);
@@ -74,7 +73,7 @@ export default {
           }
         }
       )
-   },
+    },
 
     abortFilterFn () {
     }
@@ -87,7 +86,7 @@ export default {
       },
       // setter
       set(val) {
-        this.$emit("update:dadata_new", val);
+        this.$emit('update:dadata_new', val);
       }
     }
   }

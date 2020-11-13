@@ -11,8 +11,8 @@
 </template>
 
 <script>
-import clients from "./clients";
-import companies from "./companies";
+import clients from './clients';
+import companies from './companies';
 
 export default {
   components: {

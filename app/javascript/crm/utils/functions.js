@@ -8,8 +8,8 @@ export default {
     });
   },
   resetEntity(entity) {
-      for (let key in entity) {
-          entity[key] = '';
-      }
+    for (let key in entity) {
+      entity[key] = '';
+    }
   }
 }

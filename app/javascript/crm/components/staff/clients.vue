@@ -37,11 +37,11 @@
 </template>
 
 <script>
-import functions from "../../utils/functions";
-import VALIDATORS from "../../utils/validators";
-import ERRORS from "../../utils/errors";
-import entityLoads from "../../mixins/entity_loads";
-import notifications from "../../mixins/notifications";
+import functions from '../../utils/functions';
+import VALIDATORS from '../../utils/validators';
+import ERRORS from '../../utils/errors';
+import entityLoads from '../../mixins/entity_loads';
+import notifications from '../../mixins/notifications';
 import { mapState, mapActions } from 'vuex'
 
 export default {
@@ -65,11 +65,11 @@ export default {
         this.dlg = false;
         const response = await this.$api.clients.create(client);
         this.reset(this.client);
-         response.data.length > 0 ? this.showErrNotif({ message: response.data } )
-            : this.showNotif("Client created");
+        response.data.length > 0 ? this.showErrNotif({ message: response.data } )
+          : this.showNotif('Client created');
         await this.getClients();
       } catch(err)  {
-        this.showErrNotif( { message: "Client not created " } );
+        this.showErrNotif( { message: 'Client not created ' } );
       }
     },
     async deleteClients() {
@@ -77,7 +77,7 @@ export default {
         let clients_selected = { ids:  this.selected.map(client => client.id ) };
         await this.$api.clients.delete(clients_selected);
         this.selected = [];
-        this.showNotif("Client(s) deleted");
+        this.showNotif('Client(s) deleted');
         await this.getClients();
       } catch(err) {
         this.errors.push(err);
@@ -85,7 +85,7 @@ export default {
     },
     getSelectedString () {
       return this.selected.length === 0 ? '' :
-          `${this.selected.length} record${this.selected.length > 1 ? 's' : ''} selected of ${this.clients.length}`
+        `${this.selected.length} record${this.selected.length > 1 ? 's' : ''} selected of ${this.clients.length}`
     },
     onDblClickClientsTable(evt, row) {
       let id = row.id;
@@ -104,7 +104,6 @@ export default {
   mounted() {
     this.getClients()
       .finally(() => ( this.loading = false ))
-    // eslint-disable-next-line no-undef
   }
 }
 </script>

@@ -23,9 +23,9 @@
 </template>
 
 <script>
-import functions from "../../utils/functions";
-import entityLoads from "../../mixins/entity_loads";
-import notifications from "../../mixins/notifications";
+import functions from '../../utils/functions';
+import entityLoads from '../../mixins/entity_loads';
+import notifications from '../../mixins/notifications';
 
 export default {
   mixins: [entityLoads, notifications],
@@ -56,9 +56,9 @@ export default {
     async edit() {
       try {
         await this.$api.devices.update(this.device);
-        this.showNotif("Device updated");
+        this.showNotif('Device updated');
       } catch(err)  {
-        this.showErrNotif( { message: "Device not updated " , error: err } );
+        this.showErrNotif( { message: 'Device not updated ' , error: err } );
       }
     }
   },
