@@ -26,7 +26,7 @@
 export default {
   data: function () {
     return {
-     }
+    }
   },
   props: ['user_email', 'user_logout_path']
 }

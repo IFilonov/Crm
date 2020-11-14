@@ -3,11 +3,11 @@ import VueRouter from 'vue-router'
 
 Vue.use(VueRouter)
 
-import Clients from "../components/staff/clients";
-import Companies from "../components/staff/companies";
-import Devices from "../components/staff/devices";
-import Client_edit from "../components/staff/client_edit";
-import Device_edit from "../components/staff/device_edit";
+import Clients from '../components/staff/clients';
+import Companies from '../components/staff/companies';
+import Devices from '../components/staff/devices';
+import Client_edit from '../components/staff/client_edit';
+import Device_edit from '../components/staff/device_edit';
 
 export default new VueRouter( {
   mode: 'history',

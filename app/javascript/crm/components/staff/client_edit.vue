@@ -1,5 +1,5 @@
 <template lang="pug">
-  q-dialog(v-model="dlg" persistent @hide="onHide")
+  q-dialog(v-model="showEditClientDlg" persistent @hide="onHide")
     q-card
       q-card-section(class="row items-center")
         q-form(class="q-gutter-md" @submit="onUpdate")
@@ -21,28 +21,30 @@
           div
             q-btn(label="Reset password" color="primary" @click="onResetPassword" glossy dense style="margin:5px;")
           div
-            q-btn(label="Update" type="submit" color="primary" glossy dense  style="margin:5px;")
+            q-btn(label="Update" type="submit" color="primary" glossy dense style="margin:5px;")
             q-btn(flat label="Cancel" color="primary" v-close-popup style="margin:5px;")
 </template>
 
 <script>
-import functions from "../../utils/functions";
-import VALIDATORS from "../../utils/validators";
-import ERRORS from "../../utils/errors";
-import entityLoads from "../../mixins/entity_loads";
-import notifications from "../../mixins/notifications";
+import functions from 'functions';
+import VALIDATORS from 'validators';
+import ERRORS from 'errors';
+import entityLoads from 'entity_loads';
+import notifications from 'notifications';
+import { mapState, mapActions } from 'vuex'
 
 export default {
   mixins: [entityLoads, notifications],
   data() {
     return {
-      dlg: false,
+      showEditClientDlg: false,
       client_companies: [],
       old_client_companies: [],
     }
   },
   methods: {
-    onHide(evt) {
+    ...mapActions(['getCompanies','getClients']),
+    onHide() {
       this.$router.push({ name: 'Clients' });
     },
     async getClientById() {
@@ -54,8 +56,8 @@ export default {
         this.errors.push(err);
       }
     },
-    onUpdate(evt) {
-      this.dlg = false;
+    onUpdate() {
+      this.showEditClientDlg = false;
       this.update();
       this.rebindCompaniesToClient();
     },
@@ -76,15 +78,15 @@ export default {
     },
     async resetPassword() {
       try {
-        const response = await this.$api.clients.reset({ id: this.id });
+        await this.$api.clients.reset({ id: this.id });
       } catch(err)  {
         this.errors.push(err);
       }
     },
     async update() {
       try {
-        const response = await this.$api.clients.update(this.client);
-        this.showNotif("Client updated");
+        await this.$api.clients.update(this.client);
+        this.showNotif('Client updated');
         await this.getClients();
       } catch(err)  {
         this.errors.push(err);
@@ -94,14 +96,15 @@ export default {
       try {
         let new_company_ids = functions.arrDiffs(this.client_companies, this.old_client_companies);
         let del_company_ids = functions.arrDiffs(this.old_client_companies, this.client_companies);
-        let companies = { client_id: this.client["id"], new_company_ids: new_company_ids, del_company_ids: del_company_ids }
-        const response = await this.$api.client_companies.rebind_companies(companies);
+        let companies = { client_id: this.client['id'], new_company_ids: new_company_ids, del_company_ids: del_company_ids }
+        await this.$api.client_companies.rebind_companies(companies);
       } catch(err)  {
         this.errors.push(err);
       }
     }
   },
   computed: {
+    ...mapState(['companies']),
     validEmail() {
       return VALIDATORS.EMAIL.test(this.client.email) || ERRORS.EMAIL_NOT_VALID;
     },
@@ -112,7 +115,7 @@ export default {
   created() {
     this.getClientById();
     this.getCompanies();
-    this.dlg=true;
+    this.showEditClientDlg=true;
   }
 }
 </script>

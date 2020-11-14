@@ -29,7 +29,7 @@ export default {
   props: ['dadata_new'],
   methods: {
     onAddDadata() {
-      this.$emit('dadata_company', (Object.assign({},this.dadata_company)));
+      this.$emit('dadata-company', (Object.assign({},this.dadata_company)));
       this.reset();
     },
     reset(){
@@ -50,14 +50,13 @@ export default {
           company.inn = element.data.inn;
           company.ogrn = element.data.ogrn;
           this.dadata_companies.push(Object.assign({},company));
-          }
-        )
+        })
         this.dadata_options = this.dadata_companies.filter(company => company.name.toLowerCase().indexOf(filter.toLowerCase()) > -1);
       } catch(err) {
         this.errors.push(err);
-      };
+      }
     },
-    filterFnAutoselect (val, update, abort) {
+    filterFnAutoselect (val, update) {
       // call abort() at any time if you can't retrieve data somehow
       update(
         () => {
@@ -74,7 +73,7 @@ export default {
           }
         }
       )
-   },
+    },
 
     abortFilterFn () {
     }
@@ -87,7 +86,7 @@ export default {
       },
       // setter
       set(val) {
-        this.$emit("update:dadata_new", val);
+        this.$emit('update:dadata_new', val);
       }
     }
   }

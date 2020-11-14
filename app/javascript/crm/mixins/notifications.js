@@ -13,7 +13,7 @@ export default {
     },
     showErrNotif (args) {
       this.$q.notify({
-        message: "Error! " + args.message,
+        message: 'Error! ' + args.message,
         color: 'red'
       })
     }

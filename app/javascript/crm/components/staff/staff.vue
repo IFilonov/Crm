@@ -6,9 +6,10 @@
 </template>
 
 <script>
-import navbar from "../shared/navbar";
-import dashboard from "./dashboard";
+import navbar from '../shared/navbar';
+import dashboard from './dashboard';
 import { QSpinnerGrid } from 'quasar';
+import { mapActions } from 'vuex'
 
 export default {
   components: {
@@ -21,6 +22,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['getJurTypes']),
     async staffEmail() {
       const response = await this.$api.staff.email();
       this.staff_email = response.data.staff_email;
@@ -38,6 +40,7 @@ export default {
   },
   mounted() {
     this.staffEmail();
+    this.getJurTypes();
     setTimeout(() => {
       this.$q.loading.hide()
     }, 1000);

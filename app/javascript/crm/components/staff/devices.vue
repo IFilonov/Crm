@@ -34,34 +34,40 @@
       :selected-rows-label="getSelectedString"
       :selected.sync="selected"
       :visible-columns=['name', 'type', 'serial'])
+      template(v-slot:loading)
+        q-inner-loading(showing)
+          q-spinner-dots(size="50px" color="primary")
     router-view
 </template>
 
 <script>
-import functions from "../../utils/functions";
-import entityLoads from "../../mixins/entity_loads";
-import notifications from "../../mixins/notifications";
+import functions from 'functions';
+import entityLoads from 'entity_loads';
+import notifications from 'notifications';
+import { mapState, mapActions } from 'vuex'
 
 export default {
   mixins: [entityLoads,notifications],
   data() {
     return {
       pagination: {
-        rowsPerPage: 5 // current rows per page being displayed
+        rowsPerPage: process.env.DEVICES_PER_PAGE // current rows per page being displayed
       },
-      dlg: false
+      dlg: false,
+      loading: true
     }
   },
   methods: {
+    ...mapActions(['getClients','getCompanies','getDevices']),
     reset(entity) {
       functions.resetEntity(entity);
     },
     async sendDevice(device) {
       try {
         this.dlg = false;
-        const response = await this.$api.devices.create(device);
+        await this.$api.devices.create(device);
         this.reset(this.device);
-        this.showNotif("Device created");
+        this.showNotif('Device created');
         await this.getDevices();
       } catch(err)  {
         this.errors.push(err);
@@ -70,34 +76,36 @@ export default {
     async deleteDevices() {
       try {
         let devices_selected = { ids:  this.selected.map(device => device.id) };
-        const response = await this.$api.devices.delete(devices_selected);
+        await this.$api.devices.delete(devices_selected);
         this.selected = [];
-        this.showNotif("Device(s) deleted");
+        this.showNotif('Device(s) deleted');
         await this.getClients();
       } catch(err) {
         this.errors.push(err);
       }
     },
-    onDblClickDevicesTable(evt, row, index) {
+    onDblClickDevicesTable(evt, row) {
       let id = row.id;
       this.$router.push({ name: 'Device_edit', params: { id } });
     },
     getSelectedString () {
       return this.selected.length === 0 ? '' :
-          `${this.selected.length} record${this.selected.length > 1 ? 's' : ''} selected of ${this.selected.length}`
+        `${this.selected.length} record${this.selected.length > 1 ? 's' : ''} selected of ${this.selected.length}`
     }
   },
   computed: {
+    ...mapState(['companies','devices']),
     isDevicesDelBtnDisabled() {
       return this.selected.length === 0;
     }
   },
   mounted() {
-    this.getDevices();
+    this.getDevices()
+      .finally(() => ( this.loading = false ))
     this.getCompanies();
   },
   watch:{
-    $route (to, from){
+    $route (){
       if (this.$route.name === 'Devices') {
         this.getDevices();
       }

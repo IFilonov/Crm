@@ -1,5 +1,5 @@
 <template lang="pug">
-  q-dialog(v-model="dlg" persistent @hide="onHide")
+  q-dialog(v-model="showEditDeviceDlg" persistent @hide="onHide")
     q-card
       q-card-section(class="row items-center")
         q-form(class="q-gutter-md" @submit="onUpdate")
@@ -18,24 +18,26 @@
             emit-value map-options
             transition-show="flip-up" transition-hide="flip-down")
           div
-            q-btn(label="Update" type="submit" color="primary" glossy dense  style="margin:5px;")
+            q-btn(label="Update" type="submit" color="primary" glossy dense style="margin:5px;")
             q-btn(flat label="Cancel" color="primary" v-close-popup style="margin:5px;")
 </template>
 
 <script>
-import functions from "../../utils/functions";
-import entityLoads from "../../mixins/entity_loads";
-import notifications from "../../mixins/notifications";
+import functions from 'functions';
+import entityLoads from 'entity_loads';
+import notifications from 'notifications';
+import { mapState, mapActions } from 'vuex'
 
 export default {
   mixins: [entityLoads, notifications],
   data() {
     return {
-      dlg: false
+      showEditDeviceDlg: false
     }
   },
   methods: {
-    onHide(evt) {
+    ...mapActions(['getCompanies']),
+    onHide() {
       this.$router.push({ name: 'Devices' });
     },
     async getDeviceById() {
@@ -46,8 +48,8 @@ export default {
         this.errors.push(err);
       }
     },
-    onUpdate(evt) {
-      this.dlg = false;
+    onUpdate() {
+      this.showEditDeviceDlg = false;
       this.edit();
     },
     reset(entity) {
@@ -55,14 +57,15 @@ export default {
     },
     async edit() {
       try {
-        const response = await this.$api.devices.update(this.device);
-        this.showNotif("Device updated");
+        await this.$api.devices.update(this.device);
+        this.showNotif('Device updated');
       } catch(err)  {
-        this.showErrNotif( { message: "Device not updated " , error: err } );
+        this.showErrNotif( { message: 'Device not updated ' , error: err } );
       }
     }
   },
   computed: {
+    ...mapState(['companies']),
     id() {
       return this.$route.params.id;
     }
@@ -70,7 +73,7 @@ export default {
   created() {
     this.getDeviceById();
     this.getCompanies();
-    this.dlg = true;
+    this.showEditDeviceDlg = true;
   }
 }
 </script>

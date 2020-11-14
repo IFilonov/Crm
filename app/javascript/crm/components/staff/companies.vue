@@ -26,7 +26,7 @@
             q-btn(label="Load from Dadata" color="primary" @click="qDialogs.dadata_new = true" glossy dense)
             q-btn(label="Reset" type="reset" color="primary" flat class="q-ml-sm")
             q-btn(flat label="Cancel" color="primary" v-close-popup)
-    dadata(:dadata_new.sync="qDialogs.dadata_new" v-on:dadata_company="onSetDadata")
+    dadata(:dadata_new.sync="qDialogs.dadata_new" @dadata-company="onSetDadata")
     br
     q-table(dense row-key="name" selection="multiple"
       :data="companies"
@@ -34,8 +34,16 @@
       option-label="name"
       :pagination.sync="pagination"
       :selected.sync="selected"
+      :filter="filter"
       :selected-rows-label="getSelectedString"
       :visible-columns=['name', 'inn', 'jur_type', 'ogrn'])
+      template(v-slot:top-right)
+        q-input(borderless dense debounce="300" v-model="filter" placeholder="Search")
+          template(v-slot:append)
+            q-icon(name="fas fa-search")
+      template(v-slot:loading)
+        q-inner-loading(showing)
+          q-spinner-dots(size="50px" color="primary")
     q-dialog(v-model="qDialogs.company_edit" persistent)
       q-card
         q-card-section(class="row items-center")
@@ -74,10 +82,11 @@
 </template>
 
 <script>
-import functions from "../../utils/functions";
-import dadata from "./dadata";
-import entityLoads from "../../mixins/entity_loads";
-import notifications from "../../mixins/notifications";
+import dadata from './dadata';
+import functions from 'functions';
+import entityLoads from 'entity_loads';
+import notifications from 'notifications';
+import { mapState, mapActions } from 'vuex'
 
 export default {
   mixins: [entityLoads, notifications],
@@ -91,25 +100,25 @@ export default {
       old_company_clients: [],
       company_devices: [],
       old_company_devices: [],
-      juristic_types: [],
       pagination: {
-        rowsPerPage: 20 // current rows per page being displayed
+        rowsPerPage: process.env.COMPANIES_PER_PAGE
       },
       qDialogs: {
-        client_edit: false,
-        client_new: false,
         company_new: false,
         company_edit: false,
         dadata_new: false
       },
+      filter: '',
+      loading: true
     }
   },
   methods: {
+    ...mapActions(['getClients','getCompanies','getDevices','setCompanies']),
     onSetDadata(value){
       this.company = value;
       this.qDialogs.dadata_new = false;
     },
-    onEditCompany(evt) {
+    onEditCompany() {
       this.editCompany();
       this.rebindRefsData();
       this.qDialogs.company_edit = false;
@@ -119,9 +128,8 @@ export default {
     },
     async editCompany() {
       try {
-        const response = await this.$api.companies.update(this.company);
-        this.showNotif("Company updated");
-        await this.getCompanies();
+        await this.$api.companies.update(this.company);
+        this.showNotif('Company updated');
       } catch(err)  {
         this.errors.push(err);
       }
@@ -134,7 +142,7 @@ export default {
         let del_device_ids = functions.arrDiffs(this.old_company_devices, this.company_devices);
         let data = { id: this.company.id, new_client_ids: new_client_ids, del_client_ids: del_client_ids,
           new_device_ids: new_device_ids, del_device_ids: del_device_ids};
-        const response = await this.$api.companies.rebind_refs_data(data);
+        await this.$api.companies.rebind_refs_data(data);
       } catch(err)  {
         this.errors.push(err);
       }
@@ -142,28 +150,19 @@ export default {
     async sendCompany(company) {
       try {
         this.qDialogs.company_new = false;
-        const response = await this.$api.companies.create(company);
+        await this.$api.companies.create(company);
         this.reset(this.company);
-        this.showNotif("Company created");
-        await this.getCompanies();
+        this.showNotif('Company created');
       } catch(err)  {
-        this.errors.push(err);
-      }
-    },
-    async getJuristicTypes() {
-      try {
-        const response = await this.$api.juristic_types.index();
-        this.juristic_types = response.data;
-      } catch(err) {
         this.errors.push(err);
       }
     },
     async deleteCompanies() {
       try {
         let companies_selected = { ids:  this.selected.map(company => company.id ) } ;
-        const response = await this.$api.companies.delete(companies_selected);
+        await this.$api.companies.delete(companies_selected);
         this.selected = [];
-        this.showNotif("Company(ies) deleted");
+        this.showNotif('Company(ies) deleted');
         await this.getCompanies();
       } catch(err) {
         this.errors.push(err);
@@ -171,9 +170,9 @@ export default {
     },
     getSelectedString () {
       return this.selected.length === 0 ? '' :
-          `${this.selected.length} record${this.selected.length > 1 ? 's' : ''} selected of ${this.companies.length}`
+        `${this.selected.length} record${this.selected.length > 1 ? 's' : ''} selected of ${this.companies.length}`
     },
-    onDblClickCompaniesTable(evt, row, index) {
+    onDblClickCompaniesTable(evt, row) {
       this.company = Object.assign({},row);
       this.getCompanyClients(row);
       this.getCompanyDevices(row);
@@ -199,15 +198,31 @@ export default {
     }
   },
   computed: {
+    ...mapState(['clients', 'companies', 'devices', 'juristic_types']),
     isCompaniesDelBtnDisabled() {
       return this.selected.length === 0;
     }
   },
   mounted() {
-    this.getJuristicTypes();
-    this.getCompanies();
     this.getClients();
     this.getDevices();
+    this.getCompanies()
+      .finally(() => ( this.loading = false ));
+    this.$cable.subscribe({
+      channel: 'CompaniesChannels'
+    });
+  },
+  channels: {
+    CompaniesChannels: {
+      received(data) {
+        let new_companies = functions.arrFilterById(this.companies, data.company.id);
+        let jur_type = functions.arrFilterById(this.juristic_types, data.company.juristic_type_id);
+        let new_company = (({ id, name, juristic_type_id, inn, ogrn }) => ({ id, name, juristic_type_id, inn, ogrn }))(data.company);
+        new_company.jur_type = jur_type[0].name;
+        new_companies.push(new_company);
+        this.setCompanies(new_companies);
+      }
+    }
   }
 }
 </script>

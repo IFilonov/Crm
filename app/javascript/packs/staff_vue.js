@@ -10,11 +10,14 @@ import App from '../crm/components/staff/staff.vue'
 import '../crm/api'
 import '../crm/quasar'
 import router from '../crm/router'
+import store from '../crm/store'
+import '../crm/sockets'
 
 document.addEventListener('DOMContentLoaded', () => {
   const app = new Vue({
     render: h => h(App),
-    router: router
+    router: router,
+    store
   }).$mount()
   document.body.appendChild(app.$el)
 })

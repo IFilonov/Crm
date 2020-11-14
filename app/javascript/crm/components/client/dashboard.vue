@@ -6,32 +6,29 @@
     q-page-container
       q-card
         q-card-section
-          q-table(title="Companies" dense :data="companies" row-key="name" :pagination.sync="pagination")
+          q-table(title="Companies" dense :data="client_companies" row-key="name" :pagination.sync="pagination")
 </template>
 
 <script>
+import { mapState, mapActions } from 'vuex'
+
 export default {
-  data() {
+  data: function () {
     return {
-      companies: [],
       errors: [],
       pagination: {
-        rowsPerPage: 20 // current rows per page being displayed
-      },
+        rowsPerPage: process.env.COMPANIES_PER_PAGE // current rows per page being displayed
+      }
     }
   },
   methods: {
-    async getCompanies() {
-      try {
-        const response = await this.$api.client.companies()
-        this.companies = response.data;
-      } catch(err) {
-        this.errors.push(err);
-      }
-    },
+    ...mapActions(['getClientCompanies'])
   },
   mounted() {
-    this.getCompanies();
+    this.getClientCompanies();
+  },
+  computed: {
+    ...mapState(['client_companies'])
   }
 }
 </script>
