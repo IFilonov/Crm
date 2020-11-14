@@ -1,5 +1,5 @@
 <template lang="pug">
-  q-dialog(v-model="dlg" persistent @hide="onHide")
+  q-dialog(v-model="showEditDeviceDlg" persistent @hide="onHide")
     q-card
       q-card-section(class="row items-center")
         q-form(class="q-gutter-md" @submit="onUpdate")
@@ -14,7 +14,7 @@
             lazy-rules :rules="[ val => val && val.length > 0 || 'Please type device serial number']")
           q-select(
             v-model="device.company_id" label="Company"
-            :options="$store.state.companies" option-value="id" option-label="name"
+            :options="companies" option-value="id" option-label="name"
             emit-value map-options
             transition-show="flip-up" transition-hide="flip-down")
           div
@@ -26,15 +26,17 @@
 import functions from 'functions';
 import entityLoads from 'entity_loads';
 import notifications from 'notifications';
+import { mapState, mapActions } from 'vuex'
 
 export default {
   mixins: [entityLoads, notifications],
   data() {
     return {
-      dlg: false
+      showEditDeviceDlg: false
     }
   },
   methods: {
+    ...mapActions(['getCompanies']),
     onHide() {
       this.$router.push({ name: 'Devices' });
     },
@@ -47,7 +49,7 @@ export default {
       }
     },
     onUpdate() {
-      this.dlg = false;
+      this.showEditDeviceDlg = false;
       this.edit();
     },
     reset(entity) {
@@ -63,14 +65,15 @@ export default {
     }
   },
   computed: {
+    ...mapState(['companies']),
     id() {
       return this.$route.params.id;
     }
   },
   created() {
     this.getDeviceById();
-    this.$store.dispatch('getCompanies');
-    this.dlg = true;
+    this.getCompanies();
+    this.showEditDeviceDlg = true;
   }
 }
 </script>

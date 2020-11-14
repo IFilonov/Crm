@@ -1,5 +1,5 @@
 <template lang="pug">
-  q-dialog(v-model="dlg" persistent @hide="onHide")
+  q-dialog(v-model="showEditClientDlg" persistent @hide="onHide")
     q-card
       q-card-section(class="row items-center")
         q-form(class="q-gutter-md" @submit="onUpdate")
@@ -15,7 +15,7 @@
           q-select(
             v-model="client_companies" label="Companies"
             multiple counter use-chips
-            :options="$store.state.companies" option-value="id" option-label="name"
+            :options="companies" option-value="id" option-label="name"
             emit-value map-options
             transition-show="flip-up" transition-hide="flip-down")
           div
@@ -31,17 +31,19 @@ import VALIDATORS from 'validators';
 import ERRORS from 'errors';
 import entityLoads from 'entity_loads';
 import notifications from 'notifications';
+import { mapState, mapActions } from 'vuex'
 
 export default {
   mixins: [entityLoads, notifications],
   data() {
     return {
-      dlg: false,
+      showEditClientDlg: false,
       client_companies: [],
       old_client_companies: [],
     }
   },
   methods: {
+    ...mapActions(['getCompanies','getClients']),
     onHide() {
       this.$router.push({ name: 'Clients' });
     },
@@ -55,7 +57,7 @@ export default {
       }
     },
     onUpdate() {
-      this.dlg = false;
+      this.showEditClientDlg = false;
       this.update();
       this.rebindCompaniesToClient();
     },
@@ -85,7 +87,7 @@ export default {
       try {
         await this.$api.clients.update(this.client);
         this.showNotif('Client updated');
-        await this.$store.dispatch('getClients');
+        await this.getClients();
       } catch(err)  {
         this.errors.push(err);
       }
@@ -102,6 +104,7 @@ export default {
     }
   },
   computed: {
+    ...mapState(['companies']),
     validEmail() {
       return VALIDATORS.EMAIL.test(this.client.email) || ERRORS.EMAIL_NOT_VALID;
     },
@@ -111,8 +114,8 @@ export default {
   },
   created() {
     this.getClientById();
-    this.$store.dispatch('getCompanies');
-    this.dlg=true;
+    this.getCompanies();
+    this.showEditClientDlg=true;
   }
 }
 </script>

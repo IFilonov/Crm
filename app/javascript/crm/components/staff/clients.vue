@@ -102,9 +102,6 @@ export default {
     }
   },
   mounted() {
-    const path = require('path');
-    console.log(path);
-    console.log(path);
     this.getClients()
       .finally(() => ( this.loading = false ))
   }

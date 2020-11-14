@@ -26,7 +26,7 @@
             q-btn(label="Load from Dadata" color="primary" @click="qDialogs.dadata_new = true" glossy dense)
             q-btn(label="Reset" type="reset" color="primary" flat class="q-ml-sm")
             q-btn(flat label="Cancel" color="primary" v-close-popup)
-    dadata(:dadata_new.sync="qDialogs.dadata_new" v-on:dadata-company="onSetDadata")
+    dadata(:dadata_new.sync="qDialogs.dadata_new" @dadata-company="onSetDadata")
     br
     q-table(dense row-key="name" selection="multiple"
       :data="companies"
@@ -104,8 +104,6 @@ export default {
         rowsPerPage: process.env.COMPANIES_PER_PAGE
       },
       qDialogs: {
-        client_edit: false,
-        client_new: false,
         company_new: false,
         company_edit: false,
         dadata_new: false
