@@ -9,7 +9,7 @@
     "actioncable-vue": "^2.3.2",
     "axios": "^0.20.0",
     "dotenv": "^8.2.0",
-    "quasar": "^1.14.0",
+    "quasar": "1.14.3",
     "vue": "^2.6.12",
     "vue-loader": "^15.9.3",
     "vue-router": "^3.4.7",

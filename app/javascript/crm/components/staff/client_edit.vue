@@ -26,11 +26,11 @@
 </template>
 
 <script>
-import functions from '../../utils/functions';
-import VALIDATORS from '../../utils/validators';
-import ERRORS from '../../utils/errors';
-import entityLoads from '../../mixins/entity_loads';
-import notifications from '../../mixins/notifications';
+import functions from 'functions';
+import VALIDATORS from 'validators';
+import ERRORS from 'errors';
+import entityLoads from 'entity_loads';
+import notifications from 'notifications';
 
 export default {
   mixins: [entityLoads, notifications],

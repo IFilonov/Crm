@@ -23,4 +23,7 @@ environment.plugins.insert(
   new webpack.EnvironmentPlugin(process.env)
 )
 
+const customConfig = require('./custom')
+environment.config.merge(customConfig)
+
 module.exports = environment

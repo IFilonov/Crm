@@ -41,9 +41,9 @@
 </template>
 
 <script>
-import functions from '../../utils/functions';
-import entityLoads from '../../mixins/entity_loads';
-import notifications from '../../mixins/notifications';
+import functions from 'functions';
+import entityLoads from 'entity_loads';
+import notifications from 'notifications';
 import { mapState, mapActions } from 'vuex'
 
 export default {
