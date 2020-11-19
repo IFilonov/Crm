@@ -32,6 +32,6 @@
 yarn-debug.log*
 .yarn-integrity
 
-yarn.lock
+#yarn.lock
 .idea
 

@@ -13,6 +13,7 @@ class ClientsController < ApplicationController
     client = Client.new(client_params)
     client.password = password
     client.password_confirmation = password
+    client.skip_confirmation!
     if client.save
       render :json => client
     else

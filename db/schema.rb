@@ -51,6 +51,7 @@ ActiveRecord::Schema.define(version: 2020_10_29_195755) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["juristic_type_id"], name: "index_companies_on_juristic_type_id"
+    t.index ["name", "inn", "ogrn"], name: "index_companies_on_name_and_inn_and_ogrn", unique: true
   end
 
   create_table "devices", force: :cascade do |t|

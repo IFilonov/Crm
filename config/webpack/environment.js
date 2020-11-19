@@ -19,11 +19,11 @@ environment.plugins.prepend('VueLoaderPlugin', new VueLoaderPlugin())
 environment.loaders.prepend('vue', vue)
 environment.loaders.prepend('pug', pugLoader)
 environment.plugins.insert(
-  "Environment",
+  'Environment',
   new webpack.EnvironmentPlugin(process.env)
 )
 
-const customConfig = require('./custom')
+const customConfig = require('./custom/aliases')
 environment.config.merge(customConfig)
 
 module.exports = environment
