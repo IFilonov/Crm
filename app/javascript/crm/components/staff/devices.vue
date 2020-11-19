@@ -1,9 +1,9 @@
 <template lang="pug">
-  div
+  span
     q-btn(label="Delete" type="Delete" color="primary" glossy dense style="margin:5px;"
       v-bind:disabled="isDevicesDelBtnDisabled"
       @click="deleteDevices")
-    q-btn(label="Create" color="primary" @click="dlg = true" glossy dense)
+    q-btn(label="Create" color="primary" @click="dlg = true" glossy dense style="margin:5px;")
     q-dialog(v-model="dlg" persistent)
       q-card
         q-card-section(class="row items-center")

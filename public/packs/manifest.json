@@ -22,10 +22,10 @@
     },
     "staff_vue": {
       "js": [
-        "/packs/js/staff_vue-4fc85f7d6d64e55d5fe5.js"
+        "/packs/js/staff_vue-704682b249cf4327b0f9.js"
       ],
       "js.map": [
-        "/packs/js/staff_vue-4fc85f7d6d64e55d5fe5.js.map"
+        "/packs/js/staff_vue-704682b249cf4327b0f9.js.map"
       ]
     }
   },
@@ -35,6 +35,6 @@
   "media/fontawesome-v5/fa-regular-400.woff2": "/packs/media/fontawesome-v5/fa-regular-400-1008b522.woff2",
   "media/fontawesome-v5/fa-solid-900.woff": "/packs/media/fontawesome-v5/fa-solid-900-46fdbd2d.woff",
   "media/fontawesome-v5/fa-solid-900.woff2": "/packs/media/fontawesome-v5/fa-solid-900-3ceb50e7.woff2",
-  "staff_vue.js": "/packs/js/staff_vue-4fc85f7d6d64e55d5fe5.js",
-  "staff_vue.js.map": "/packs/js/staff_vue-4fc85f7d6d64e55d5fe5.js.map"
+  "staff_vue.js": "/packs/js/staff_vue-704682b249cf4327b0f9.js",
+  "staff_vue.js.map": "/packs/js/staff_vue-704682b249cf4327b0f9.js.map"
 }

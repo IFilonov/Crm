@@ -1,5 +1,5 @@
 <template lang="pug">
-  span Companies
+  span
     q-btn(label="Delete" type="Delete" color="primary" glossy dense style="margin:5px;"
       v-bind:disabled="isCompaniesDelBtnDisabled"
       @click="deleteCompanies")
