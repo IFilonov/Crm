@@ -34,10 +34,5 @@
     "eslint-plugin-vue": "^7.1.0",
     "eslint-webpack-plugin": "^2.3.0",
     "webpack-dev-server": "^3.11.0"
-  },
-  "scripts": {
-    "build": "quasar build",
-    "start": "node server.js",
-    "heroku-postbuild": "yarn && yarn build"
   }
 }
