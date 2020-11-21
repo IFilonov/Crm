@@ -1,9 +1,12 @@
 <template lang="pug">
-  div
+  span
     q-btn(label="Delete" type="Delete" color="primary" glossy dense style="margin:5px;"
       v-bind:disabled="isClientsDelBtnDisabled"
       @click="deleteClients")
-    q-btn(label="Create" color="primary" @click="dlg = true" glossy dense)
+    q-btn(label="Create" color="primary" @click="dlg = true" glossy dense style="margin:5px;")
+    q-btn(label="Modify" color="primary" glossy dense style="margin:5px;")
+      q-popup-proxy(transition-show="flip-up" transition-hide="flip-down")
+        q-banner(class="bg-purple text-white") For edit, please, make doubleclick on row of data below
     q-dialog(v-model="dlg" persistent)
       q-card
         q-card-section(class="row items-center")
@@ -21,18 +24,18 @@
               q-btn(label="Submit" type="submit" color="primary")
               q-btn(label="Reset" type="reset" color="primary" flat class="q-ml-sm")
               q-btn(flat label="Cancel" color="primary" v-close-popup)
-    br
-    q-table(dense row-key="email" selection="multiple"
-      @row-dblclick="onDblClickClientsTable"
-      :loading="loading"
-      :data="clients"
-      :pagination.sync="pagination"
-      :selected-rows-label="getSelectedString"
-      :selected.sync="selected"
-      :visible-columns=['fullname', 'email', 'phone'])
-      template(v-slot:loading)
-        q-inner-loading(showing)
-          q-spinner-dots(size="50px" color="primary")
+    div(class="q-pa-md")
+      q-table(dense row-key="email" selection="multiple" class="text-primary"
+        @row-dblclick="onDblClickClientsTable"
+        :loading="loading"
+        :data="clients"
+        :pagination.sync="pagination"
+        :selected-rows-label="getSelectedString"
+        :selected.sync="selected"
+        :visible-columns=['fullname', 'email', 'phone'])
+        template(v-slot:loading)
+          q-inner-loading(showing)
+            q-spinner-dots(size="50px" color="primary")
     router-view
 </template>
 
@@ -90,7 +93,7 @@ export default {
     onDblClickClientsTable(evt, row) {
       let id = row.id;
       this.$router.push({ name: 'Client_edit', params: { id } });
-    },
+    }
   },
   computed: {
     ...mapState(['clients']),

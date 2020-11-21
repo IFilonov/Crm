@@ -1,9 +1,12 @@
 <template lang="pug">
-  div
+  span
     q-btn(label="Delete" type="Delete" color="primary" glossy dense style="margin:5px;"
       v-bind:disabled="isDevicesDelBtnDisabled"
       @click="deleteDevices")
-    q-btn(label="Create" color="primary" @click="dlg = true" glossy dense)
+    q-btn(label="Create" color="primary" @click="dlg = true" glossy dense style="margin:5px;")
+    q-btn(label="Modify" color="primary" glossy dense style="margin:5px;")
+      q-popup-proxy(transition-show="flip-up" transition-hide="flip-down")
+        q-banner(class="bg-purple text-white") For edit, please, make doubleclick on row of data below
     q-dialog(v-model="dlg" persistent)
       q-card
         q-card-section(class="row items-center")
@@ -26,17 +29,17 @@
               q-btn(label="Submit" type="submit" color="primary")
               q-btn(label="Reset" type="reset" color="primary" flat class="q-ml-sm")
               q-btn(flat label="Cancel" color="primary" v-close-popup)
-    br
-    q-table(dense row-key="serial" selection="multiple"
-      @row-dblclick="onDblClickDevicesTable"
-      :data="devices"
-      :pagination.sync="pagination"
-      :selected-rows-label="getSelectedString"
-      :selected.sync="selected"
-      :visible-columns=['name', 'type', 'serial'])
-      template(v-slot:loading)
-        q-inner-loading(showing)
-          q-spinner-dots(size="50px" color="primary")
+    div(class="q-pa-md")
+      q-table(dense row-key="serial" selection="multiple" class="text-primary"
+        @row-dblclick="onDblClickDevicesTable"
+        :data="devices"
+        :pagination.sync="pagination"
+        :selected-rows-label="getSelectedString"
+        :selected.sync="selected"
+        :visible-columns=['name', 'type', 'serial'])
+        template(v-slot:loading)
+          q-inner-loading(showing)
+            q-spinner-dots(size="50px" color="primary")
     router-view
 </template>
 
@@ -113,6 +116,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-</style>

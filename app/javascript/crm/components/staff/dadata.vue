@@ -5,7 +5,7 @@
         q-card-section(class="row items-center")
           q-form(class="q-gutter-md" @submit="onAddDadata" @reset="reset")
             q-select(filled v-model="dadata_company" clearable use-input hide-selected fill-input
-            input-debounce="300" label="Autoselect after filtering" :options="dadata_options"
+            input-debounce="300" label="Type first symbols of company name..." :options="dadata_options"
               option-label="name"
               @filter="filterFnAutoselect"  @filter-abort="abortFilterFn" style="width: 300px")
             template(v-slot:no-option)

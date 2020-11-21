@@ -1,15 +1,23 @@
 Rails.application.routes.draw do
-  root 'application#index'
-
   devise_for :clients
   devise_for :staffs
+
+  authenticated :client do
+    root 'clients#index', as: :authenticated_client
+  end
+  authenticated :staff do
+    root 'staffs#index', as: :authenticated_staff
+  end
+
+  root 'application#index'
+
   get '/staffs/staff_logout', to: 'staffs#staff_logout'
   get '/clients/client_logout', to: 'clients#client_logout'
 
   constraints ->(req) { req.format == :json } do
     get '/staffs/staff_email', to: 'staffs#staff_email'
     post '/clients/create', to: 'clients#create'
-    get '/clients', to: 'clients#index'
+    get '/clients', to: 'clients#clients_all'
     get '/clients/client_email', to: 'clients#client_email'
     post '/clients/id', to: 'clients#client'
     get '/client/companies', to: 'clients#companies'

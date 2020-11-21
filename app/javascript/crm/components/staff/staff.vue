@@ -1,6 +1,6 @@
 <template lang="pug">
-  #staff
-    q-layout(view="hHh lPr fff")
+  div
+    q-layout()
       navbar(:user_email = "staff_email" :user_logout_path="$api.staff.logout")
       dashboard
 </template>
@@ -47,10 +47,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-p {
-  font-size: 2em;
-  text-align: center;
-}
-</style>
