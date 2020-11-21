@@ -24,18 +24,18 @@
               q-btn(label="Submit" type="submit" color="primary")
               q-btn(label="Reset" type="reset" color="primary" flat class="q-ml-sm")
               q-btn(flat label="Cancel" color="primary" v-close-popup)
-    br
-    q-table(dense row-key="email" selection="multiple"
-      @row-dblclick="onDblClickClientsTable"
-      :loading="loading"
-      :data="clients"
-      :pagination.sync="pagination"
-      :selected-rows-label="getSelectedString"
-      :selected.sync="selected"
-      :visible-columns=['fullname', 'email', 'phone'])
-      template(v-slot:loading)
-        q-inner-loading(showing)
-          q-spinner-dots(size="50px" color="primary")
+    div(class="q-pa-md")
+      q-table(dense row-key="email" selection="multiple" class="text-primary"
+        @row-dblclick="onDblClickClientsTable"
+        :loading="loading"
+        :data="clients"
+        :pagination.sync="pagination"
+        :selected-rows-label="getSelectedString"
+        :selected.sync="selected"
+        :visible-columns=['fullname', 'email', 'phone'])
+        template(v-slot:loading)
+          q-inner-loading(showing)
+            q-spinner-dots(size="50px" color="primary")
     router-view
 </template>
 

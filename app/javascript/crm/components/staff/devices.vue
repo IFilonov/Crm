@@ -29,17 +29,17 @@
               q-btn(label="Submit" type="submit" color="primary")
               q-btn(label="Reset" type="reset" color="primary" flat class="q-ml-sm")
               q-btn(flat label="Cancel" color="primary" v-close-popup)
-    br
-    q-table(dense row-key="serial" selection="multiple"
-      @row-dblclick="onDblClickDevicesTable"
-      :data="devices"
-      :pagination.sync="pagination"
-      :selected-rows-label="getSelectedString"
-      :selected.sync="selected"
-      :visible-columns=['name', 'type', 'serial'])
-      template(v-slot:loading)
-        q-inner-loading(showing)
-          q-spinner-dots(size="50px" color="primary")
+    div(class="q-pa-md")
+      q-table(dense row-key="serial" selection="multiple" class="text-primary"
+        @row-dblclick="onDblClickDevicesTable"
+        :data="devices"
+        :pagination.sync="pagination"
+        :selected-rows-label="getSelectedString"
+        :selected.sync="selected"
+        :visible-columns=['name', 'type', 'serial'])
+        template(v-slot:loading)
+          q-inner-loading(showing)
+            q-spinner-dots(size="50px" color="primary")
     router-view
 </template>
 
@@ -116,6 +116,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-</style>

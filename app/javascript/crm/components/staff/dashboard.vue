@@ -1,5 +1,5 @@
 <template lang="pug">
-  #dashboard
+  span
     q-drawer(show-if-above bordered side="left" behavior="desktop" elevated)
       q-list(bordered padding class="rounded-borders text-primary text-bold")
         q-item(clickable v-ripple active-class="my-menu-link" :to="{ name: 'Clients'}")
@@ -16,7 +16,7 @@
           q-item-section Devices
     q-page-container
       q-card
-        q-tabs(active-bg-color="amber" indicator-color="amber" align="left")
+        q-tabs(active-bg-color="amber" indicator-color="amber" align="left" dense)
           q-route-tab(label="Clients" :to="{ name: 'Clients' }" class="text-primary")
           q-route-tab(label="Companies" :to="{ name: 'Companies' }" class="text-primary")
           q-route-tab(label="Devices" :to="{ name: 'Devices' }" class="text-primary")
@@ -35,6 +35,3 @@ export default {
   }
 }
 </script>
-
-<style lang="sass">
-</style>

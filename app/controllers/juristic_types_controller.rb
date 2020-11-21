@@ -1,5 +1,4 @@
 class JuristicTypesController < ApplicationController
-
   before_action :authenticate_staff!, only: [:index]
 
   def index

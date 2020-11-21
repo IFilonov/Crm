@@ -1,9 +1,12 @@
 class ClientsController < ApplicationController
-  before_action :authenticate_staff!, only: [:create, :index, :delete, :update, :client, :reset]
-  before_action :authenticate_client!, only: [:client_email, :client_logout, :companies]
+  before_action :authenticate_staff!, only: [:create, :clients_all, :delete, :update, :client, :reset]
+  before_action :authenticate_client!, only: [:client_email, :client_logout, :companies, :index]
   before_action :find_client, only: [:update, :client, :reset]
-  
+
   def index
+  end
+
+  def clients_all
     render :json => Client.all.pluck_all(:id, :fullname, :email, :phone)
   end
 

@@ -1,5 +1,5 @@
 <template lang="pug">
-  span
+  div(class="q-pa-md")
     q-btn(label="Delete" type="Delete" color="primary" glossy dense style="margin:5px;"
       v-bind:disabled="isCompaniesDelBtnDisabled"
       @click="deleteCompanies")
@@ -29,24 +29,24 @@
             q-btn(label="Load from Dadata" color="primary" @click="qDialogs.dadata_new = true" glossy dense)
             q-btn(label="Reset" type="reset" color="primary" flat class="q-ml-sm")
             q-btn(flat label="Cancel" color="primary" v-close-popup)
-    dadata(:dadata_new.sync="qDialogs.dadata_new" @dadata-company="onSetDadata")
-    br
-    q-table(dense row-key="name" selection="multiple" class="text-primary"
-      :data="companies"
-      @row-dblclick="onDblClickCompaniesTable"
-      option-label="name"
-      :pagination.sync="pagination"
-      :selected.sync="selected"
-      :filter="filter"
-      :selected-rows-label="getSelectedString"
-      :visible-columns=['name', 'inn', 'jur_type', 'ogrn'])
-      template(v-slot:top-right)
-        q-input(borderless dense debounce="300" v-model="filter" placeholder="Search")
-          template(v-slot:append)
-            q-icon(name="fas fa-search")
-      template(v-slot:loading)
-        q-inner-loading(showing)
-          q-spinner-dots(size="50px" color="primary")
+    div(class="q-pa-md")
+      q-table(dense row-key="name" selection="multiple" class="text-primary"
+        :data="companies"
+        binary-state-sort=false
+        @row-dblclick="onDblClickCompaniesTable"
+        option-label="name"
+        :pagination.sync="pagination"
+        :selected.sync="selected"
+        :filter="filter"
+        :selected-rows-label="getSelectedString"
+        :visible-columns=['name', 'inn', 'jur_type', 'ogrn'])
+        template(v-slot:top-right)
+          q-input(borderless dense debounce="300" v-model="filter" placeholder="Search")
+            template(v-slot:append)
+              q-icon(name="fas fa-search")
+        template(v-slot:loading)
+          q-inner-loading(showing)
+            q-spinner-dots(size="50px" color="primary")
     q-dialog(v-model="qDialogs.company_edit" persistent)
       q-card
         q-card-section(class="row items-center")
@@ -82,6 +82,7 @@
             div
               q-btn(label="Update" type="submit" color="primary")
               q-btn(flat label="Cancel" color="primary" v-close-popup)
+    dadata(:dadata_new.sync="qDialogs.dadata_new" @dadata-company="onSetDadata")
 </template>
 
 <script>
@@ -229,6 +230,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-</style>

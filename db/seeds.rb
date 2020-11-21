@@ -15,15 +15,17 @@ staff.save!
 
 client = Client.new(
     email: 'client@client.com',
+    fullname: 'Petrov Alexandr',
+    phone: "8912345678",
     password: 'password',
     password_confirmation: 'password')
 client.skip_confirmation!
 client.save!
 
-JuristicType.create(name: 'физическое лицо')
-jur_type = JuristicType.create(name: 'юридическое лицо')
+JuristicType.create(name: 'физ. лицо')
+jur_type = JuristicType.create(name: 'юр. лицо')
 
-Company.create(name: 'Центральный склад',
+Company.create(name: 'Central warehouse',
                juristic_type_id: jur_type.id,
                inn: 1234567890,
                ogrn: 1234567890)
