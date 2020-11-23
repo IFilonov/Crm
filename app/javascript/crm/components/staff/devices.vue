@@ -36,6 +36,7 @@
         :pagination.sync="pagination"
         :selected-rows-label="getSelectedString"
         :selected.sync="selected"
+        :loading="loading"
         :visible-columns=['name', 'type', 'serial'])
         template(v-slot:loading)
           q-inner-loading(showing)
@@ -56,8 +57,7 @@ export default {
       pagination: {
         rowsPerPage: process.env.DEVICES_PER_PAGE // current rows per page being displayed
       },
-      dlg: false,
-      loading: true
+      dlg: false
     }
   },
   methods: {

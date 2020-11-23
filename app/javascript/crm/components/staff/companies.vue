@@ -32,6 +32,7 @@
     div(class="q-pa-md")
       q-table(dense row-key="name" selection="multiple" class="text-primary"
         :data="companies"
+        :loading="loading"
         binary-state-sort=false
         @row-dblclick="onDblClickCompaniesTable"
         option-label="name"
@@ -112,8 +113,7 @@ export default {
         company_edit: false,
         dadata_new: false
       },
-      filter: '',
-      loading: true
+      filter: ''
     }
   },
   methods: {
