@@ -30,7 +30,7 @@ class ClientsController < ApplicationController
 
   def client_logout
     sign_out current_client
-    redirect_to root_path
+    redirect_to new_client_session_path
   end
 
   def companies

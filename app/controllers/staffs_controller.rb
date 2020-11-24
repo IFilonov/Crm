@@ -10,6 +10,6 @@ class StaffsController < ApplicationController
 
   def staff_logout
     sign_out current_staff
-    redirect_to root_path
+    redirect_to new_staff_session_path
   end
 end
