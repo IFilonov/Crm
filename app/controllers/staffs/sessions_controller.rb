@@ -6,6 +6,9 @@ class Staffs::SessionsController < Devise::SessionsController
   # GET /resource/sign_in
   def new
     @user = Staff.first
+    @link = new_client_session_path
+    @link_name = "Clients"
+    @title_name = "Staffs"
     super
     flash.clear
    end

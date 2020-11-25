@@ -2,7 +2,7 @@
   <div class="col col-lg-2"></div>
   <div class="col-md-auto justify-content-md-center" style="border: 5px solid #407CDA;">
     <br>
-      <h2 style="color: #407CDA">QCrm Log in</h2>
+      <h2 style="color: #407CDA"><%= @title_name %> QCrm</h2>
       <br>
       <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
         <div class="form-group">
@@ -28,6 +28,9 @@
       <% end %>
       <br>
       <%= render "devise/shared/links" %>
+      <br>
+      <%= link_to  "to #{@link_name} part of QCrm" , @link, class: 'btn', style: "background-color: #407CDA; color: white"%>
+      <br>
       <br>
   </div>
   <div class="col col-lg-2"></div>
