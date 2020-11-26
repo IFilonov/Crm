@@ -54,8 +54,7 @@ export default {
       pagination: {
         rowsPerPage: process.env.CLIENTS_PER_PAGE // current rows per page being displayed
       },
-      dlg: false,
-      loading: true
+      dlg: false
     }
   },
   methods: {
