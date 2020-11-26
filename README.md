@@ -1,24 +1,15 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Simple application with VUE as frontend and ROR as api backend
 
-Things you may want to cover:
-
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+QCrm functionality:
+   1) Shows and admins clients, companies, devices in staff section
+    1.1) Binds clients with companies, companies with devices
+    1.2) Loads companies from dadata.ru by first symbols of company name
+    1.3) Sorts, finds and filters entities
+    1.4) Shows changes without reloading page or all data in tables;
+   2) Shows client companies in client section
+   
+    You can find app on heroku resoures:
+    
+    https://qcrm.herokuapp.com/
