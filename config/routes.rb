@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
-  devise_for :clients
-  devise_for :staffs
+  devise_for :clients, controllers: { sessions: 'clients/sessions' }
+  devise_for :staffs, controllers: { sessions: 'staffs/sessions'  }
 
   authenticated :client do
     root 'clients#index', as: :authenticated_client

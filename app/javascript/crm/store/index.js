@@ -30,25 +30,25 @@ export default new Vuex.Store(  {
     }
   },
   actions: {
-    getClients: ( context ) => {
+    getClients: (context) => {
       return Vue.prototype.$api.clients.index()
         .then(({ data }) => (context.commit('CHANGE_CLIENTS', data)))
     },
-    getCompanies: ( context ) => {
+    getCompanies: (context) => {
       return Vue.prototype.$api.companies.index()
         .then(({ data }) => (context.commit('CHANGE_COMPANIES', data)))
     },
-    setCompanies: ( context, data ) => {
+    setCompanies: (context, data) => {
       context.commit('CHANGE_COMPANIES', data);
     },
-    getDevices: ( context ) => {
+    getDevices: (context) => {
       return Vue.prototype.$api.devices.index()
         .then(({ data }) => (context.commit('CHANGE_DEVICES', data)))
     },
-    getJurTypes: ( context ) => {
+    getJurTypes: (context) => {
       if (context.state.juristic_types.length == 0) {
         return Vue.prototype.$api.juristic_types.index()
-          .then(({data}) => (context.commit('CHANGE_JURTYPES', data)))
+          .then(({ data }) => (context.commit('CHANGE_JURTYPES', data)))
       }
     },
     getClientCompanies: ( context ) => {
