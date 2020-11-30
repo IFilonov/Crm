@@ -9,24 +9,42 @@
         q-banner(class="bg-purple text-white") For edit, please, make doubleclick on row of data below
     q-dialog(v-model="qDialogs.company_new" persistent)
       q-card
+        q-card(class="text-white" style="background: radial-gradient(circle, #35a2ff 0%, #014a88 100%)")
+          q-card-section(class="row items-center")
+            div(class="text-h6 text-white") Load company from Dadata.ru
+            q-select(filled v-model="dadata_company"
+              clearable use-input hide-selected fill-input
+              input-debounce="300"
+              class="col-12"
+              bg-color="white"
+              label="Type first symbols of company name..."
+              :options="dadata_options"
+              option-label="name"
+              @filter="filterFnAutoselect"
+              @filter-abort="abortFilterFn"
+              @input="onSetDadata")
+              template(v-slot:no-option)
+                q-item
+                  q-item-section(class="text-grey") No results
         q-card-section(class="row items-center")
-          q-form(class="q-gutter-md" @submit="sendCompany(company)" @reset="reset(company)")
-            q-input(filled label="Company name *"
+          q-form(@submit="sendCompany(company)" @reset="reset(company)" class="col-12")
+            q-input(filled label="Company NAME"
               v-model="company.name"
               lazy-rules :rules="[ val => val && val.length > 2 || 'Please type name > 2 chars']")
-            q-input(filled type="number" label="INN" hint="Company inn"
-              v-model="company.inn"
-              lazy-rules :rules="[ val => val && val.toString().length > 9 || 'Please type INN > 9 only digits']")
-            q-input(filled type="number" label="Company OGRN *"
-              v-model="company.ogrn"
-              lazy-rules :rules="[ val => val && val.toString().length > 9 || 'Please type OGRN > 9 only digits']")
+            div(class="q-gutter-md row")
+              q-input(filled type="number" label="Company INN"
+                v-model="company.inn"
+                lazy-rules :rules="[ val => val && val.toString().length > 9 || 'Please type INN > 9 only digits']")
+              q-input(filled type="number" label="Company OGRN"
+                v-model="company.ogrn"
+                lazy-rules :rules="[ val => val && val.toString().length > 9 || 'Please type OGRN > 9 only digits']")
             q-select(
-              v-model="company.juristic_type_id" label="Juristic type"
+              v-model="company.juristic_type_id" label="Juristic type" dense
               :options="juristic_types" option-value="id" option-label="name"
               emit-value map-options
               transition-show="flip-up" transition-hide="flip-down")
-            q-btn(label="Submit" type="submit" color="primary" glossy dense)
-            q-btn(label="Load from Dadata" color="primary" @click="qDialogs.dadata_new = true" glossy dense)
+            br
+            q-btn(label="Submit" type="submit" color="primary" glossy class="q-ml-sm")
             q-btn(label="Reset" type="reset" color="primary" flat class="q-ml-sm")
             q-btn(flat label="Cancel" color="primary" v-close-popup)
     div(class="q-pa-md")
@@ -83,11 +101,9 @@
             div
               q-btn(label="Update" type="submit" color="primary")
               q-btn(flat label="Cancel" color="primary" v-close-popup)
-    dadata(:dadata_new.sync="qDialogs.dadata_new" @dadata-company="onSetDadata")
 </template>
 
 <script>
-import dadata from './dadata';
 import functions from 'functions';
 import entityLoads from 'entity_loads';
 import notifications from 'notifications';
@@ -95,11 +111,11 @@ import { mapState, mapActions } from 'vuex'
 
 export default {
   mixins: [entityLoads, notifications],
-  components: {
-    dadata: dadata,
-  },
   data() {
     return {
+      dadata_companies: [],
+      dadata_options: [],
+      dadata_company: '',
       client_companies: [],
       company_clients: [],
       old_company_clients: [],
@@ -110,17 +126,15 @@ export default {
       },
       qDialogs: {
         company_new: false,
-        company_edit: false,
-        dadata_new: false
+        company_edit: false
       },
       filter: ''
     }
   },
   methods: {
     ...mapActions(['getClients','getCompanies','getDevices','setCompanies']),
-    onSetDadata(value){
-      this.company = value;
-      this.qDialogs.dadata_new = false;
+    onSetDadata(dadata_company){
+      this.company = (Object.assign({},dadata_company));
     },
     onEditCompany() {
       this.editCompany();
@@ -129,6 +143,9 @@ export default {
     },
     reset(entity) {
       functions.resetEntity(entity);
+      this.dadata_options = [];
+      this.dadata_company = '';
+      this.dadata_companies = [];
     },
     async editCompany() {
       try {
@@ -199,6 +216,45 @@ export default {
       } catch(err) {
         this.errors.push(err);
       }
+    },
+    async getDadataCompanies(filter) {
+      try {
+        this.dadata_companies = [];
+        let dadata_filter = {
+          query: filter
+        };
+        const response = await this.$api.dadata.index(dadata_filter);
+        response.data.suggestions.forEach(element => {
+          let company = {};
+          company.name= element.data.name.full;
+          company.inn = element.data.inn;
+          company.ogrn = element.data.ogrn;
+          this.dadata_companies.push(Object.assign({},company));
+        })
+        this.dadata_options = this.dadata_companies.filter(company => company.name.toLowerCase().indexOf(filter.toLowerCase()) > -1);
+      } catch(err) {
+        this.errors.push(err);
+      }
+    },
+    filterFnAutoselect (val, update) {
+      // call abort() at any time if you can't retrieve data somehow
+      update(
+        () => {
+          if (val.length > 0) {
+            this.getDadataCompanies(val);
+          } else {
+            this.dadata_options = (Object.assign([], this.dadata_companies));
+          }
+        },
+        ref => {
+          if (val !== '' && ref.options.length > 0 && ref.optionIndex === -1) {
+            ref.moveOptionSelection(1, true) // focus the first selectable option and do not update the input-value
+            ref.toggleOption(ref.options[ref.optionIndex].name, true) // toggle the focused option
+          }
+        }
+      )
+    },
+    abortFilterFn () {
     }
   },
   computed: {
@@ -220,10 +276,9 @@ export default {
     CompaniesChannels: {
       received(data) {
         let new_companies = functions.arrFilterById(this.companies, data.company.id);
-        let jur_type = functions.arrFilterById(this.juristic_types, data.company.juristic_type_id);
-        let new_company = (({ id, name, juristic_type_id, inn, ogrn }) => ({ id, name, juristic_type_id, inn, ogrn }))(data.company);
-        new_company.jur_type = jur_type[0].name;
-        new_companies.push(new_company);
+        let new_company = (({ id, name, jur_type, inn, juristic_type_id, ogrn }) => ({ id, name, jur_type, inn, juristic_type_id, ogrn }))(data.company);
+        new_company.jur_type = this.juristic_types.find(jur_type => jur_type.id === new_company.juristic_type_id).name
+        new_companies.unshift(new_company);
         this.setCompanies(new_companies);
       }
     }
