@@ -9,38 +9,42 @@
         q-banner(class="bg-purple text-white") For edit, please, make doubleclick on row of data below
     q-dialog(v-model="qDialogs.company_new" persistent)
       q-card
+        q-card(class="text-white" style="background: radial-gradient(circle, #35a2ff 0%, #014a88 100%)")
+          q-card-section(class="row items-center")
+            div(class="text-h6 text-white") Load company from Dadata.ru
+            q-select(filled v-model="dadata_company"
+              clearable use-input hide-selected fill-input
+              input-debounce="300"
+              class="col-12"
+              bg-color="white"
+              label="Type first symbols of company name..."
+              :options="dadata_options"
+              option-label="name"
+              @filter="filterFnAutoselect"
+              @filter-abort="abortFilterFn"
+              @input="onSetDadata")
+              template(v-slot:no-option)
+                q-item
+                  q-item-section(class="text-grey") No results
         q-card-section(class="row items-center")
-          q-select(filled v-model="dadata_company"
-            clearable use-input hide-selected fill-input
-            input-debounce="300"
-            class="col-12"
-            label="Type first symbols of company name..."
-            :options="dadata_options"
-            option-label="name"
-            @filter="filterFnAutoselect"
-            @filter-abort="abortFilterFn"
-            @input="onSetDadata")
-            template(v-slot:no-option)
-              q-item
-                q-item-section(class="text-grey") No results
-        q-card-section(class="row items-center")
-          q-form(class="q-gutter-md" @submit="sendCompany(company)" @reset="reset(company)")
-            q-input(filled label="Company name *"
+          q-form(@submit="sendCompany(company)" @reset="reset(company)" class="col-12")
+            q-input(filled label="Company NAME"
               v-model="company.name"
               lazy-rules :rules="[ val => val && val.length > 2 || 'Please type name > 2 chars']")
-            q-input(filled type="number" label="INN" hint="Company inn"
-              v-model="company.inn"
-              lazy-rules :rules="[ val => val && val.toString().length > 9 || 'Please type INN > 9 only digits']")
-            q-input(filled type="number" label="Company OGRN *"
-              v-model="company.ogrn"
-              lazy-rules :rules="[ val => val && val.toString().length > 9 || 'Please type OGRN > 9 only digits']")
+            div(class="q-gutter-md row")
+              q-input(filled type="number" label="Company INN"
+                v-model="company.inn"
+                lazy-rules :rules="[ val => val && val.toString().length > 9 || 'Please type INN > 9 only digits']")
+              q-input(filled type="number" label="Company OGRN"
+                v-model="company.ogrn"
+                lazy-rules :rules="[ val => val && val.toString().length > 9 || 'Please type OGRN > 9 only digits']")
             q-select(
-              v-model="company.juristic_type_id" label="Juristic type"
+              v-model="company.juristic_type_id" label="Juristic type" dense
               :options="juristic_types" option-value="id" option-label="name"
               emit-value map-options
               transition-show="flip-up" transition-hide="flip-down")
-            q-btn(label="Submit" type="submit" color="primary" glossy dense)
-            q-btn(label="Load from Dadata" color="primary" @click="qDialogs.dadata_new = true" glossy dense)
+            br
+            q-btn(label="Submit" type="submit" color="primary" glossy class="q-ml-sm")
             q-btn(label="Reset" type="reset" color="primary" flat class="q-ml-sm")
             q-btn(flat label="Cancel" color="primary" v-close-popup)
     div(class="q-pa-md")
@@ -122,8 +126,7 @@ export default {
       },
       qDialogs: {
         company_new: false,
-        company_edit: false,
-        dadata_new: false
+        company_edit: false
       },
       filter: ''
     }
@@ -274,8 +277,8 @@ export default {
       received(data) {
         let new_companies = functions.arrFilterById(this.companies, data.company.id);
         let jur_type = functions.arrFilterById(this.juristic_types, data.company.juristic_type_id);
-        let new_company = (({ id, name, juristic_type_id, inn, ogrn }) => ({ id, name, juristic_type_id, inn, ogrn }))(data.company);
-        new_company.jur_type = jur_type[0].name;
+        let new_company = (({ id, name, jur_type, inn, juristic_type_id, ogrn }) => ({ id, name, jur_type, inn, juristic_type_id, ogrn }))(data.company);
+        new_company.jur_type = jur_type[new_company.juristic_type_id].name;
         new_companies.unshift(new_company);
         this.setCompanies(new_companies);
       }

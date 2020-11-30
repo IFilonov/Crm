@@ -10,8 +10,9 @@ export default {
       company: {
         id: '',
         name: '',
-        inn: '',
         juristic_type_id: '',
+        jur_type: '',
+        inn: '',
         ogrn: ''
       },
       device: {
