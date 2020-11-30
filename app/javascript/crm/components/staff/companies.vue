@@ -276,9 +276,8 @@ export default {
     CompaniesChannels: {
       received(data) {
         let new_companies = functions.arrFilterById(this.companies, data.company.id);
-        let jur_type = functions.arrFilterById(this.juristic_types, data.company.juristic_type_id);
         let new_company = (({ id, name, jur_type, inn, juristic_type_id, ogrn }) => ({ id, name, jur_type, inn, juristic_type_id, ogrn }))(data.company);
-        new_company.jur_type = jur_type[new_company.juristic_type_id].name;
+        new_company.jur_type = this.juristic_types.find(jur_type => jur_type.id === new_company.juristic_type_id).name
         new_companies.unshift(new_company);
         this.setCompanies(new_companies);
       }
