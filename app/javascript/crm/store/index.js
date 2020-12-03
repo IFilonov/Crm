@@ -10,7 +10,8 @@ export default new Vuex.Store(  {
     companies: [],
     devices: [],
     juristic_types: [],
-    client_companies: []
+    client_companies: [],
+    companies_count: 0
   },
   mutations: {
     CHANGE_CLIENTS: (state, clients) => {
@@ -18,6 +19,9 @@ export default new Vuex.Store(  {
     },
     CHANGE_COMPANIES: (state, companies) => {
       state.companies  = companies;
+    },
+    CHANGE_COMPANIES_COUNT: (state, count) => {
+      state.companies_count  = count;
     },
     CHANGE_DEVICES: (state, devices) => {
       state.devices  = devices;
@@ -36,6 +40,14 @@ export default new Vuex.Store(  {
     },
     getCompanies: (context) => {
       return Vue.prototype.$api.companies.index()
+        .then(({ data }) => (context.commit('CHANGE_COMPANIES', data)))
+    },
+    getCompaniesCount: (context) => {
+      return Vue.prototype.$api.companies.count()
+        .then(({ data }) => (context.commit('CHANGE_COMPANIES_COUNT', data)))
+    },
+    getCompaniesPagination: (context, data) => {
+      return Vue.prototype.$api.companies.index_paginate(data.page, data.per_page, data.filter_name)
         .then(({ data }) => (context.commit('CHANGE_COMPANIES', data)))
     },
     setCompanies: (context, data) => {

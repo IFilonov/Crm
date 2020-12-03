@@ -20,8 +20,8 @@
               label="Type first symbols of company name..."
               :options="dadata_options"
               option-label="name"
-              @filter="filterFnAutoselect"
-              @filter-abort="abortFilterFn"
+              @filter="filterDadataAutoselect"
+              @filter-abort="abortFilterDadata"
               @input="onSetDadata")
               template(v-slot:no-option)
                 q-item
@@ -51,12 +51,12 @@
       q-table(dense row-key="name" selection="multiple" class="text-primary"
         :data="companies"
         :loading="loading"
-        binary-state-sort=false
         @row-dblclick="onDblClickCompaniesTable"
         option-label="name"
         :pagination.sync="pagination"
         :selected.sync="selected"
         :filter="filter"
+        @request="onRequest"
         :selected-rows-label="getSelectedString"
         :visible-columns=['name', 'inn', 'jur_type', 'ogrn'])
         template(v-slot:top-right)
@@ -122,7 +122,11 @@ export default {
       company_devices: [],
       old_company_devices: [],
       pagination: {
-        rowsPerPage: process.env.COMPANIES_PER_PAGE
+        rowsPerPage: process.env.COMPANIES_PER_PAGE,
+        sortBy: 'desc',
+        descending: false,
+        page: 1,
+        rowsNumber: 0
       },
       qDialogs: {
         company_new: false,
@@ -132,7 +136,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['getClients','getCompanies','getDevices','setCompanies']),
+    ...mapActions(['getClients','getCompanies','getDevices','setCompanies','getCompaniesPagination','getCompaniesCount']),
     onSetDadata(dadata_company){
       this.company = (Object.assign({},dadata_company));
     },
@@ -236,7 +240,7 @@ export default {
         this.errors.push(err);
       }
     },
-    filterFnAutoselect (val, update) {
+    filterDadataAutoselect (val, update) {
       // call abort() at any time if you can't retrieve data somehow
       update(
         () => {
@@ -254,11 +258,28 @@ export default {
         }
       )
     },
-    abortFilterFn () {
-    }
+    abortFilterDadata () {
+    },
+    onRequest (props) {
+      const { page, rowsPerPage, sortBy, descending } = props.pagination
+      const filter_name = props.filter || ''
+      this.loading = true
+
+      this.getCompaniesCount();
+      this.pagination.rowsNumber = this.companies_count;
+      const fetchCount = rowsPerPage === 0 ? this.pagination.rowsNumber : rowsPerPage
+
+      this.getCompaniesPagination( { page: page, per_page: fetchCount, filter_name: filter_name })
+        .finally(() => ( this.loading = false ))
+
+      this.pagination.page = page
+      this.pagination.rowsPerPage = rowsPerPage
+      this.pagination.sortBy = sortBy
+      this.pagination.descending = descending
+    },
   },
   computed: {
-    ...mapState(['clients', 'companies', 'devices', 'juristic_types']),
+    ...mapState(['clients', 'companies', 'devices', 'juristic_types','companies_count']),
     isCompaniesDelBtnDisabled() {
       return this.selected.length === 0;
     }
@@ -266,8 +287,10 @@ export default {
   mounted() {
     this.getClients();
     this.getDevices();
-    this.getCompanies()
-      .finally(() => ( this.loading = false ));
+    this.getCompaniesCount();
+    this.pagination.rowsNumber = this.companies_count;
+    this.getCompaniesPagination( { page: this.pagination.page, per_page: this.pagination.rowsPerPage, filter_name: ''})
+      .finally(() => ( this.loading = false ))
     this.$cable.subscribe({
       channel: 'CompaniesChannels'
     });
