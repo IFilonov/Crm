@@ -3,9 +3,21 @@ class CompaniesController < ApplicationController
   before_action :find_client, only: [:client_companies]
   before_action :find_company, only: [:update, :clients, :devices, :rebind_refs_data]
 
+  FILTERS = {
+    filter_name: lambda { |scope, filter_name| scope.where("lower(companies.name) like ?", "%#{filter_name.downcase}%") }
+  }
+
   def index
-    render :json => Company.all.includes(:juristic_type).order(updated_at: :desc).
+    scope = Company.all
+    FILTERS.each_pair do |key, filter|
+      scope = filter.call(scope, params[key]) if params[key].present?
+    end
+    render :json => scope.includes(:juristic_type).order(updated_at: :desc).paginate(page: params[:page], per_page: params[:per_page]).
         pluck_all(:id, :name, :juristic_type_id, '"juristic_types"."name" as jur_type', :inn, :ogrn, :updated_at)
+  end
+
+  def count
+    render :json => Company.count
   end
 
   def delete

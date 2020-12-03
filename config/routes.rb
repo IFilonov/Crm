@@ -22,6 +22,7 @@ Rails.application.routes.draw do
     post '/clients/id', to: 'clients#client'
     get '/client/companies', to: 'clients#companies'
     get '/companies', to: 'companies#index'
+    get '/companies/count', to: 'companies#count'
     post '/clients/delete', to: 'clients#delete'
     post '/companies/delete', to: 'companies#delete'
     post '/companies/create', to: 'companies#create'
