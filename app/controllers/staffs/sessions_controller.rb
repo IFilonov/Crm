@@ -2,13 +2,10 @@
 
 class Staffs::SessionsController < Devise::SessionsController
   # before_action :configure_sign_in_params, only: [:create]
-
+  include Resources
   # GET /resource/sign_in
   def new
-    @user = Staff.first
-    @link = new_client_session_path
-    @link_name = "Clients"
-    @title_name = "Staffs"
+    session_resources
     super
     flash.clear
    end

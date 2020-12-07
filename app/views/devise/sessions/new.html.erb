@@ -29,7 +29,8 @@
       <br>
       <%= render "devise/shared/links" %>
       <br>
-      <%= link_to  "to #{@link_name} part of QCrm" , @link, class: 'btn', style: "background-color: #407CDA; color: white"%>
+      <%= link_to  "to #{@resource_names.first.capitalize} part of QCrm" , session_path(@resource_names.first),
+                   class: 'btn', style: "background-color: #407CDA; color: white"%>
       <br>
       <br>
   </div>
