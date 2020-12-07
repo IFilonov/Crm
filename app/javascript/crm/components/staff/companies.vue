@@ -136,7 +136,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['getClients','getCompanies','getDevices','setCompanies','getCompaniesPagination','getCompaniesCount']),
+    ...mapActions(['getClients', 'getDevices', 'setCompanies', 'getCompaniesPagination', 'getCompaniesCount']),
     onSetDadata(dadata_company){
       this.company = (Object.assign({},dadata_company));
     },
@@ -188,7 +188,9 @@ export default {
         await this.$api.companies.delete(companies_selected);
         this.selected = [];
         this.showNotif('Company(ies) deleted');
-        await this.getCompanies();
+        this.loading = true;
+        await this.getCompaniesPagination( { page: this.pagination.page, per_page: this.pagination.rowsPerPage, filter_name: this.filter})
+          .finally(() => ( this.loading = false ));
       } catch(err) {
         this.errors.push(err);
       }
@@ -270,12 +272,12 @@ export default {
       const fetchCount = rowsPerPage === 0 ? this.pagination.rowsNumber : rowsPerPage
 
       this.getCompaniesPagination( { page: page, per_page: fetchCount, filter_name: filter_name })
-        .finally(() => ( this.loading = false ))
-
-      this.pagination.page = page
-      this.pagination.rowsPerPage = rowsPerPage
-      this.pagination.sortBy = sortBy
-      this.pagination.descending = descending
+        .finally(() => (
+          this.pagination.page = page,
+          this.pagination.rowsPerPage = rowsPerPage,
+          this.pagination.sortBy = sortBy,
+          this.pagination.descending = descending,
+          this.loading = false))
     },
   },
   computed: {
@@ -285,12 +287,12 @@ export default {
     }
   },
   mounted() {
-    this.getClients();
-    this.getDevices();
     this.getCompaniesCount();
     this.pagination.rowsNumber = this.companies_count;
     this.getCompaniesPagination( { page: this.pagination.page, per_page: this.pagination.rowsPerPage, filter_name: ''})
-      .finally(() => ( this.loading = false ))
+      .finally(() => ( this.loading = false ));
+    this.getClients();
+    this.getDevices();
     this.$cable.subscribe({
       channel: 'CompaniesChannels'
     });

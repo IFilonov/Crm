@@ -72,7 +72,6 @@ export default {
   },
   created() {
     this.getDeviceById();
-    this.getCompanies();
     this.showEditDeviceDlg = true;
   }
 }
