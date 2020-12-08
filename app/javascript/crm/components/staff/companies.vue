@@ -17,7 +17,7 @@
               input-debounce="300"
               class="col-12"
               bg-color="white"
-              label="Type first symbols of company name..."
+              label="Type 1st symbols company name (russian)..."
               :options="dadata_options"
               option-label="name"
               @filter="filterDadataAutoselect"
@@ -49,7 +49,7 @@
             q-btn(flat label="Cancel" color="primary" v-close-popup)
     div(class="q-pa-md")
       q-table(dense row-key="name" selection="multiple" class="text-primary"
-        :data="companies"
+        :data="companies_part"
         :loading="loading"
         @row-dblclick="onDblClickCompaniesTable"
         option-label="name"
@@ -66,9 +66,9 @@
         template(v-slot:loading)
           q-inner-loading(showing)
             q-spinner-dots(size="50px" color="primary")
-    q-dialog(v-model="qDialogs.company_edit" persistent)
-      q-card
-        q-card-section(class="row items-center")
+    q-dialog(v-model="qDialogs.company_edit" persistent style="width: 400px; max-width: 60vw;")
+      q-card(style="width: 360px; max-width: 60vw;")
+        q-card-section(class="q-gutter")
           q-form(class="q-gutter-md" @submit="onEditCompany")
             q-input(filled dense label="Company name *"
               v-model="company.name"
@@ -84,14 +84,14 @@
               :options="juristic_types" option-value="id" option-label="name"
               emit-value map-options dense
               transition-show="flip-up" transition-hide="flip-down")
-            p(dense) Bind with clients:
+            p Bind with clients:
             q-select(
               v-model="company_clients" label="Clients"
               multiple counter use-chips dense
               :options="clients" option-value="id" option-label="fullname"
               emit-value map-options
               transition-show="flip-up" transition-hide="flip-down")
-            p(dense) Bind with devices:
+            p Bind with devices:
             q-select(
               v-model="company_devices" label="Devices"
               multiple counter use-chips dense
@@ -99,8 +99,8 @@
               emit-value map-options
               transition-show="flip-up" transition-hide="flip-down")
             div
-              q-btn(label="Update" type="submit" color="primary")
-              q-btn(flat label="Cancel" color="primary" v-close-popup)
+              q-btn(label="Update" type="submit" color="primary"  class="shadow-7")
+              q-btn(flat label="Cancel" color="primary" class="shadow-7" v-close-popup)
 </template>
 
 <script>
@@ -136,7 +136,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['getClients','getCompanies','getDevices','setCompanies','getCompaniesPagination','getCompaniesCount']),
+    ...mapActions(['getClients', 'getDevices', 'setCompaniesPart', 'getCompaniesPagination', 'getCompaniesCount']),
     onSetDadata(dadata_company){
       this.company = (Object.assign({},dadata_company));
     },
@@ -188,14 +188,16 @@ export default {
         await this.$api.companies.delete(companies_selected);
         this.selected = [];
         this.showNotif('Company(ies) deleted');
-        await this.getCompanies();
+        this.loading = true;
+        await this.getCompaniesPagination( { page: this.pagination.page, per_page: this.pagination.rowsPerPage, filter_name: this.filter})
+          .finally(() => ( this.loading = false ));
       } catch(err) {
         this.errors.push(err);
       }
     },
     getSelectedString () {
       return this.selected.length === 0 ? '' :
-        `${this.selected.length} record${this.selected.length > 1 ? 's' : ''} selected of ${this.companies.length}`
+        `${this.selected.length} record${this.selected.length > 1 ? 's' : ''} selected of ${this.companies_count}`
     },
     onDblClickCompaniesTable(evt, row) {
       this.company = Object.assign({},row);
@@ -270,27 +272,27 @@ export default {
       const fetchCount = rowsPerPage === 0 ? this.pagination.rowsNumber : rowsPerPage
 
       this.getCompaniesPagination( { page: page, per_page: fetchCount, filter_name: filter_name })
-        .finally(() => ( this.loading = false ))
-
-      this.pagination.page = page
-      this.pagination.rowsPerPage = rowsPerPage
-      this.pagination.sortBy = sortBy
-      this.pagination.descending = descending
+        .finally(() => (
+          this.pagination.page = page,
+          this.pagination.rowsPerPage = rowsPerPage,
+          this.pagination.sortBy = sortBy,
+          this.pagination.descending = descending,
+          this.loading = false))
     },
   },
   computed: {
-    ...mapState(['clients', 'companies', 'devices', 'juristic_types','companies_count']),
+    ...mapState(['clients', 'companies_part', 'devices', 'juristic_types','companies_count']),
     isCompaniesDelBtnDisabled() {
       return this.selected.length === 0;
     }
   },
   mounted() {
-    this.getClients();
-    this.getDevices();
     this.getCompaniesCount();
     this.pagination.rowsNumber = this.companies_count;
     this.getCompaniesPagination( { page: this.pagination.page, per_page: this.pagination.rowsPerPage, filter_name: ''})
-      .finally(() => ( this.loading = false ))
+      .finally(() => ( this.loading = false ));
+    this.getClients();
+    this.getDevices();
     this.$cable.subscribe({
       channel: 'CompaniesChannels'
     });
@@ -298,11 +300,11 @@ export default {
   channels: {
     CompaniesChannels: {
       received(data) {
-        let new_companies = functions.arrFilterById(this.companies, data.company.id);
+        let new_companies = functions.arrFilterById(this.companies_part, data.company.id);
         let new_company = (({ id, name, jur_type, inn, juristic_type_id, ogrn }) => ({ id, name, jur_type, inn, juristic_type_id, ogrn }))(data.company);
         new_company.jur_type = this.juristic_types.find(jur_type => jur_type.id === new_company.juristic_type_id).name
         new_companies.unshift(new_company);
-        this.setCompanies(new_companies);
+        this.setCompaniesPart(new_companies);
       }
     }
   }

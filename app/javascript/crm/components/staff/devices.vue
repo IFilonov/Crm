@@ -61,7 +61,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['getClients','getCompanies','getDevices']),
+    ...mapActions(['getCompanies','getDevices']),
     reset(entity) {
       functions.resetEntity(entity);
     },
@@ -71,7 +71,9 @@ export default {
         await this.$api.devices.create(device);
         this.reset(this.device);
         this.showNotif('Device created');
-        await this.getDevices();
+        this.loading = true;
+        await this.getDevices()
+          .finally(() => ( this.loading = false ))
       } catch(err)  {
         this.errors.push(err);
       }
@@ -82,7 +84,9 @@ export default {
         await this.$api.devices.delete(devices_selected);
         this.selected = [];
         this.showNotif('Device(s) deleted');
-        await this.getClients();
+        this.loading = true;
+        await this.getDevices()
+          .finally(() => ( this.loading = false ))
       } catch(err) {
         this.errors.push(err);
       }
@@ -110,7 +114,9 @@ export default {
   watch:{
     $route (){
       if (this.$route.name === 'Devices') {
-        this.getDevices();
+        this.loading = true;
+        this.getDevices()
+          .finally(() => ( this.loading = false ))
       }
     }
   }

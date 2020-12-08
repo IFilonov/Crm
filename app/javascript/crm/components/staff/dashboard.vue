@@ -23,15 +23,3 @@
         q-card-section
           router-view
 </template>
-
-<script>
-import clients from './clients';
-import companies from './companies';
-
-export default {
-  components: {
-    clients: clients,
-    companies: companies
-  }
-}
-</script>

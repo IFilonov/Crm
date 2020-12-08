@@ -8,10 +8,15 @@ class CompaniesController < ApplicationController
   }
 
   def index
+    render :json => Company.all.pluck_all(:name, :id)
+  end
+
+  def part
     scope = Company.all
     FILTERS.each_pair do |key, filter|
       scope = filter.call(scope, params[key]) if params[key].present?
     end
+    sleep 0.5  #for visual effect
     render :json => scope.includes(:juristic_type).order(updated_at: :desc).paginate(page: params[:page], per_page: params[:per_page]).
         pluck_all(:id, :name, :juristic_type_id, '"juristic_types"."name" as jur_type', :inn, :ogrn, :updated_at)
   end
