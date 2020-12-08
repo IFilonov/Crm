@@ -1,7 +1,7 @@
 <template lang="pug">
   q-dialog(v-model="showEditDeviceDlg" persistent @hide="onHide")
-    q-card
-      q-card-section(class="row items-center")
+    q-card(style="width: 360px; max-width: 80vw;")
+      q-card-section(class="q-gutter")
         q-form(class="q-gutter-md" @submit="onUpdate")
           q-input(filled label="Device name"
             v-model="device.name"
@@ -73,6 +73,7 @@ export default {
   created() {
     this.getDeviceById();
     this.showEditDeviceDlg = true;
+    this.getCompanies();
   }
 }
 </script>

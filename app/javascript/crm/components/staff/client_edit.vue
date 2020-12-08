@@ -1,7 +1,7 @@
 <template lang="pug">
   q-dialog(v-model="showEditClientDlg" persistent @hide="onHide")
-    q-card
-      q-card-section(class="row items-center")
+    q-card(style="width: 360px; max-width: 80vw;")
+      q-card-section(class="q-gutter")
         q-form(class="q-gutter-md" @submit="onUpdate")
           q-input(filled label="Your Fullname *" hint="Name and surname"
             v-model="client.fullname"
@@ -114,8 +114,8 @@ export default {
   },
   created() {
     this.getClientById();
-    this.getCompanies();
     this.showEditClientDlg=true;
+    this.getCompanies();
   }
 }
 </script>

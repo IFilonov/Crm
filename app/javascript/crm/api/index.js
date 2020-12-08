@@ -34,7 +34,7 @@ const api = {
   companies: {
     index: () => adapter.get('/companies'),
     count: () => adapter.get('/companies/count'),
-    index_paginate: (page, per_page, filter_name) => adapter.get('/companies?page='+ page +'&per_page=' + per_page +'&filter_name=' + filter_name),
+    index_paginate: (page, per_page, filter_name) => adapter.get('/companies/part?page='+ page +'&per_page=' + per_page +'&filter_name=' + filter_name),
     create: (company) => adapter.post('/companies/create', company),
     update: (company) => adapter.patch('/companies/update', company),
     delete: (companies) => adapter.post('/companies/delete', companies),
