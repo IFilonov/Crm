@@ -136,7 +136,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['getClients', 'getDevices', 'setCompanies', 'getCompaniesPagination', 'getCompaniesCount']),
+    ...mapActions(['getClients', 'getDevices', 'setCompaniesPart', 'getCompaniesPagination', 'getCompaniesCount']),
     onSetDadata(dadata_company){
       this.company = (Object.assign({},dadata_company));
     },
