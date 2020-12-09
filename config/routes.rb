@@ -11,14 +11,14 @@ Rails.application.routes.draw do
 
   root 'application#index'
 
-  get '/staffs/staff_logout', to: 'staffs#staff_logout'
-  get '/clients/client_logout', to: 'clients#client_logout'
+  get '/staffs/logout', to: 'staffs#logout'
+  get '/clients/logout', to: 'clients#logout'
 
   constraints ->(req) { req.format == :json } do
-    get '/staffs/staff_email', to: 'staffs#staff_email'
+    get '/staffs/email', to: 'staffs#email'
     post '/clients/create', to: 'clients#create'
     get '/clients', to: 'clients#clients_all'
-    get '/clients/client_email', to: 'clients#client_email'
+    get '/clients/email', to: 'clients#email'
     post '/clients/id', to: 'clients#client'
     get '/client/companies', to: 'clients#companies'
     get '/companies/part', to: 'companies#part'
