@@ -4,11 +4,11 @@ class StaffsController < ApplicationController
   def index
   end
 
-  def staff_email
+  def email
     render :json => {:staff_email => current_staff.email }
   end
 
-  def staff_logout
+  def logout
     sign_out current_staff
     redirect_to new_staff_session_path
   end

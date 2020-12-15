@@ -24,11 +24,11 @@ class ClientsController < ApplicationController
     end
   end
 
-  def client_email
+  def email
     render :json => {:client_email => current_client.email }
   end
 
-  def client_logout
+  def logout
     sign_out current_client
     redirect_to new_client_session_path
   end

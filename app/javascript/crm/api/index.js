@@ -16,7 +16,7 @@ const adapter = axios.create({
 const api = {
   clients: {
     index: () => adapter.get('/clients'),
-    email: () => adapter.get('/clients/client_email'),
+    email: () => adapter.get('/clients/email'),
     create: (client) => adapter.post('/clients/create', client),
     update: (client) => adapter.patch('/clients/update', client),
     reset: (id) => adapter.patch('/clients/reset', id),
@@ -25,16 +25,17 @@ const api = {
   },
   client: {
     companies: () => adapter.get('/client/companies'),
-    logout: '/clients/client_logout'
+    logout: '/clients/logout'
   },
   staff: {
-    logout: '/staffs/staff_logout',
-    email: () => adapter.get('/staffs/staff_email')
+    logout: '/staffs/logout',
+    email: () => adapter.get('/staffs/email')
   },
   companies: {
     index: () => adapter.get('/companies'),
     count: () => adapter.get('/companies/count'),
-    index_paginate: (page, per_page, filter_name) => adapter.get('/companies/part?page='+ page +'&per_page=' + per_page +'&filter_name=' + filter_name),
+    index_paginate: (page, per_page, filter_name) =>
+      adapter.get('/companies/part?page='+ page +'&per_page=' + per_page +'&filter_name=' + filter_name),
     create: (company) => adapter.post('/companies/create', company),
     update: (company) => adapter.patch('/companies/update', company),
     delete: (companies) => adapter.post('/companies/delete', companies),
