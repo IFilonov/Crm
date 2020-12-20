@@ -6,7 +6,5 @@ class ClientsCompany < ApplicationRecord
 
   def broadcast
     ActionCable.server.broadcast('client_companies', { client_id: self.client_id, company: self.company })
-    puts "*******************"
-    puts self.company
   end
 end
