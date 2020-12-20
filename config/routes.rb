@@ -18,7 +18,7 @@ Rails.application.routes.draw do
     get '/staffs/email', to: 'staffs#email'
     post '/clients/create', to: 'clients#create'
     get '/clients', to: 'clients#clients_all'
-    get '/clients/email', to: 'clients#email'
+    get '/clients/info', to: 'clients#info'
     post '/clients/id', to: 'clients#client'
     get '/client/companies', to: 'clients#companies'
     get '/companies/part', to: 'companies#part'
