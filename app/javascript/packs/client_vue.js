@@ -10,6 +10,7 @@ import App from '../crm/components/client/client.vue'
 import '../crm/api'
 import '../crm/quasar'
 import store from '../crm/store'
+import '../crm/sockets'
 
 document.addEventListener('DOMContentLoaded', () => {
   const app = new Vue({

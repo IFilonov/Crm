@@ -70,6 +70,9 @@ export default new Vuex.Store(  {
     getClientCompanies: ( context ) => {
       return Vue.prototype.$api.client.companies()
         .then(({ data }) => (context.commit('CHANGE_CLIENT_COMPANIES', data)))
+    },
+    setClientCompanies: (context, data) => {
+      context.commit('CHANGE_CLIENT_COMPANIES', data)
     }
   },
   modules: {},

@@ -24,8 +24,8 @@ class ClientsController < ApplicationController
     end
   end
 
-  def email
-    render :json => {:client_email => current_client.email }
+  def info
+    render :json => {id: current_client.id, client_email: current_client.email }
   end
 
   def logout

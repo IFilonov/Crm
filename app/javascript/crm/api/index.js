@@ -16,7 +16,7 @@ const adapter = axios.create({
 const api = {
   clients: {
     index: () => adapter.get('/clients'),
-    email: () => adapter.get('/clients/email'),
+    info: () => adapter.get('/clients/info'),
     create: (client) => adapter.post('/clients/create', client),
     update: (client) => adapter.patch('/clients/update', client),
     reset: (id) => adapter.patch('/clients/reset', id),
