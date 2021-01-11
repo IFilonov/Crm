@@ -1,10 +1,11 @@
 import Vue from 'vue'
 import axios from 'axios'
 
-const token = document.head.querySelector('meta[name="csrf-token"]')
-axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content
+//const token = document.head.querySelector('meta[name="csrf-token"]')
+//axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content
 
 const DADATA_API_KEY = process.env.DADATA_API_KEY
+const FIXER_API_KEY = process.env.FIXER_API_KEY
 
 const adapter = axios.create({
   baseURL: process.env.API_BASE_URL,
@@ -56,7 +57,7 @@ const api = {
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
-          'Authorization': 'Token ' + DADATA_API_KEY
+          'Authorization': `Token ${DADATA_API_KEY}`
         }
       })
   },
@@ -66,6 +67,15 @@ const api = {
     update: (client) => adapter.patch('/devices/update', client),
     delete: (clients) => adapter.post('/devices/delete', clients),
     get: (id) => adapter.post('/devices/id', id)
+  },
+  fixer: {
+    index: (query) => adapter.get( `http://data.fixer.io/api/latest?access_key=${FIXER_API_KEY}`, query,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        }
+      })
   }
 }
 

@@ -8,6 +8,7 @@ import Companies from '../components/staff/companies';
 import Devices from '../components/staff/devices';
 import Client_edit from '../components/staff/client_edit';
 import Device_edit from '../components/staff/device_edit';
+import Currency from '../components/staff/currency';
 
 export default new VueRouter( {
   mode: 'history',
@@ -25,6 +26,7 @@ export default new VueRouter( {
       children: [
         { path: ':id', component: Device_edit, name: 'Device_edit' }
       ]
-    }
+    },
+    { path: '/staffs/currency', component: Currency, name: 'Currency' },
   ]
 })
