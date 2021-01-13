@@ -13,7 +13,8 @@ export default new Vuex.Store(  {
     juristic_types: [],
     client_companies: [],
     companies_count: 0,
-    currency: {}
+    currency: {},
+    rates: []
   },
   mutations: {
     CHANGE_CLIENTS: (state, clients) => {
@@ -39,6 +40,7 @@ export default new Vuex.Store(  {
     },
     CHANGE_CURRENCY: (state, currency) => {
       state.currency  = currency;
+      state.rates = Object.entries(currency.rates).map(element => ({ name: element[0], rate: element[1]}) );
     }
   },
   actions: {
