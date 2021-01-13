@@ -14,12 +14,17 @@
           q-item-section(avatar)
             q-icon(name="fas fa-cubes")
           q-item-section Devices
+        q-item(clickable v-ripple active-class="my-menu-link" :to="{ name: 'Currency'}")
+          q-item-section(avatar)
+            q-icon(name="fas fa-euro-sign")
+          q-item-section Currency
     q-page-container
       q-card
         q-tabs(active-bg-color="amber" indicator-color="amber" align="left" dense)
           q-route-tab(label="Clients" :to="{ name: 'Clients' }" class="text-primary")
           q-route-tab(label="Companies" :to="{ name: 'Companies' }" class="text-primary")
           q-route-tab(label="Devices" :to="{ name: 'Devices' }" class="text-primary")
+          q-route-tab(label="Currency" :to="{ name: 'Currency' }" class="text-primary")
         q-card-section
           router-view
 </template>

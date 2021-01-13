@@ -12,7 +12,9 @@ export default new Vuex.Store(  {
     devices: [],
     juristic_types: [],
     client_companies: [],
-    companies_count: 0
+    companies_count: 0,
+    currency: {},
+    rates: []
   },
   mutations: {
     CHANGE_CLIENTS: (state, clients) => {
@@ -35,6 +37,10 @@ export default new Vuex.Store(  {
     },
     CHANGE_CLIENT_COMPANIES: (state, client_companies) => {
       state.client_companies  = client_companies;
+    },
+    CHANGE_CURRENCY: (state, currency) => {
+      state.currency  = currency;
+      state.rates = Object.entries(currency.rates).map(element => ({ name: element[0], rate: element[1]}) );
     }
   },
   actions: {
@@ -62,7 +68,7 @@ export default new Vuex.Store(  {
         .then(({ data }) => (context.commit('CHANGE_DEVICES', data)))
     },
     getJurTypes: (context) => {
-      if (context.state.juristic_types.length == 0) {
+      if (context.state.juristic_types.length === 0) {
         return Vue.prototype.$api.juristic_types.index()
           .then(({ data }) => (context.commit('CHANGE_JURTYPES', data)))
       }
@@ -73,6 +79,10 @@ export default new Vuex.Store(  {
     },
     setClientCompanies: (context, data) => {
       context.commit('CHANGE_CLIENT_COMPANIES', data)
+    },
+    fetchCurrency: (context) => {
+      return Vue.prototype.$api.fixer.index()
+        .then(({ data }) => (context.commit('CHANGE_CURRENCY', data)))
     }
   },
   modules: {},
